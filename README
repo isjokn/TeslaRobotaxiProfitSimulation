@@ -1,0 +1,24 @@
+# Tesla Robotaxi Profit Simulation
+
+A Python script utilizing Monte Carlo simulation to estimate the annual profit of Tesla's robotaxi operations.
+
+## Table of Contents
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [How It Works](#how-it-works)
+- [Key Variables](#key-variables)
+- [Simulation Details](#simulation-details)
+- [Example Outputs](#example-outputs)
+- [Limitations](#limitations)
+- [Future Work](#future-work)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+- [Contact](#contact)
+
+## Installation
+You'll need Python installed on your system along with the `numpy` library:
+
+```sh
+pip install numpy
