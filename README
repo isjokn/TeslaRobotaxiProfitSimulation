@@ -18,7 +18,7 @@ A Python script utilizing Monte Carlo simulation to estimate the annual profit o
 - [Contact](#contact)
 
 ## Installation
-You'll need Python installed on your system along with the `numpy` library:
+You'll need Python 3 installed on your system along with the `numpy` library:
 
 ```sh
 pip install numpy
