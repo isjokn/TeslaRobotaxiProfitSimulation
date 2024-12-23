@@ -2,14 +2,14 @@ import numpy as np
 
 # Constants
 YEARS = 5  # Model over 5 years
-MILES_PER_YEAR = 60000  # Miles per year per vehicle default is 100k
-VEHICLE_COST = 30000  # Cost of a robotaxi default is 30k
-VEHICLE_LIFESPAN = 5  # Years of operation default is 5
-ENERGY_COST_PER_MILE = 0.03  # $0.03 per mile for electricity
-MAINTENANCE_COST_PER_MILE = 0.04  # $0.04 per mile for maintenance
+MILES_PER_YEAR = 50000  # Miles per year per vehicle default is 50k, full time Uber and Lyft drivers report $50,000 per year.
+VEHICLE_COST = 30000  # Cost of a robotaxi default is 30k, Elon Musk has said Cybercab would cost less than $30,000
+VEHICLE_LIFESPAN = 5  # Years of operation default is 5, according to Tesla, a Model 3 can exceed 200,000 miles of useful life.
+ENERGY_COST_PER_MILE = 0.04  # $0.04 per mile for electricity, current estimates online suggest 4.8 cents per mile for personal use.
+MAINTENANCE_COST_PER_MILE = 0.04  # $0.04 per mile for maintenance, current estimates online suggest 4.5 cents per mile for personal use.
 PLATFORM_FEE = 0.25  # 25% platform fee (revenue split)
 SAFETY_DRIVER_COST_PER_HOUR = 15  # Hourly cost for safety driver phase-out default is 15
-FLEET_SIZE = 3  # Number of vehicles in your robotaxi fleet default is 1
+FLEET_SIZE = 1  # Number of vehicles in your robotaxi fleet default is 1
 ###MARKET_PENETRATION = 0.1  # 10% market penetration to start
 
 # Function to calculate cost per mile for robotaxi operations
