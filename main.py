@@ -10,6 +10,7 @@ MAINTENANCE_COST_PER_MILE = 0.04  # $0.04 per mile for maintenance, current esti
 PLATFORM_FEE = 0.25  # 25% platform fee (revenue split)
 SAFETY_DRIVER_COST_PER_HOUR = 15  # Hourly cost for safety driver phase-out default is 15
 FLEET_SIZE = 1  # Number of vehicles in your robotaxi fleet default is 1
+FSD_SUBSCRIPTION = 2388 # $199 per month for 12 months
 ###MARKET_PENETRATION = 0.1  # 10% market penetration to start
 
 # Function to calculate cost per mile for robotaxi operations
@@ -75,9 +76,12 @@ def monte_carlo_simulation(num_simulations=1000):
 mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles = monte_carlo_simulation()
 
 # Calculate Total_Fleet_Profit using the mean_profit from the simulation * the FLEET_SIZE
-Total_Fleet_Profit = mean_profit * FLEET_SIZE
+Total_Fleet_Profit = Actual_Profit * FLEET_SIZE
 
-print(f"Average Annual Profit per Robotaxi: ${mean_profit:,.2f}")
+# Subtract FSD Subscription Fees
+Actual_Profit = mean_profit - FSD_SUBSCRIPTION
+
+print(f"Average Annual Profit per Robotaxi: ${Actual_Profit:,.2f}")
 print(f"Standard Deviation of Profit: ${std_profit:,.2f}")
 print(f"Total Robotaxis in Fleet: {FLEET_SIZE:.0f}")
 print(f"Total Annual Fleet Profit: ${Total_Fleet_Profit:,.2f}")
