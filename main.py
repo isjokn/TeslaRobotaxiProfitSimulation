@@ -75,11 +75,11 @@ def monte_carlo_simulation(num_simulations=1000):
 # Run the simulation
 mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles = monte_carlo_simulation()
 
-# Calculate Total_Fleet_Profit using the mean_profit from the simulation * the FLEET_SIZE
-Total_Fleet_Profit = Actual_Profit * FLEET_SIZE
-
 # Subtract FSD Subscription Fees
 Actual_Profit = mean_profit - FSD_SUBSCRIPTION
+
+# Calculate Total_Fleet_Profit using the mean_profit from the simulation * the FLEET_SIZE
+Total_Fleet_Profit = Actual_Profit * FLEET_SIZE
 
 print(f"Average Annual Profit per Robotaxi: ${Actual_Profit:,.2f}")
 print(f"Standard Deviation of Profit: ${std_profit:,.2f}")
