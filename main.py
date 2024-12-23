@@ -10,7 +10,7 @@ MAINTENANCE_COST_PER_MILE = 0.04  # $0.04 per mile for maintenance, current esti
 PLATFORM_FEE = 0.25  # 25% platform fee (revenue split)
 SAFETY_DRIVER_COST_PER_HOUR = 15  # Hourly cost for safety driver phase-out default is 15
 FLEET_SIZE = 1  # Number of vehicles in your robotaxi fleet default is 1
-FSD_SUBSCRIPTION = 2388 # $199 per month for 12 months
+FSD_SUBSCRIPTION = 1188 # $99 per month for 12 months
 ###MARKET_PENETRATION = 0.1  # 10% market penetration to start
 
 # Function to calculate cost per mile for robotaxi operations
