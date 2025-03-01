@@ -23,6 +23,7 @@ def monte_carlo_simulation(num_simulations=1000):
     autonomous_miles_results = []
     revenue_results = []
     cost_per_mile_results = []
+    occupancy_rate_results = []  # New list to track occupancy rates
     
     for _ in range(num_simulations):
         total_profit = 0
@@ -45,11 +46,10 @@ def monte_carlo_simulation(num_simulations=1000):
             depreciation_per_mile = depreciation / miles_driven
             cost_per_mile = depreciation_per_mile + ENERGY_COST_PER_MILE + MAINTENANCE_COST_PER_MILE
             
-            # Revenue adjusted for occupancy
             revenue = revenue_per_mile(willingness_to_pay, PLATFORM_FEE) * occupancy_rate
             revenue_results.append(revenue)
+            occupancy_rate_results.append(occupancy_rate)  # Collect occupancy rate
             
-            # Profit using adjusted revenue
             profit_per_mile = revenue - cost_per_mile
             adjusted_cost = cost_per_mile + (SAFETY_DRIVER_COST_PER_HOUR * (miles_driven - (miles_driven * autonomous_success_rate)) / 20 / miles_driven)
             total_cost_sim += adjusted_cost * miles_driven
@@ -76,6 +76,7 @@ def monte_carlo_simulation(num_simulations=1000):
             
             revenue = revenue_per_mile(willingness_to_pay, PLATFORM_FEE) * occupancy_rate
             revenue_results.append(revenue)
+            occupancy_rate_results.append(occupancy_rate)  # Collect occupancy rate
             
             profit_per_mile = revenue - cost_per_mile
             adjusted_cost = cost_per_mile + (SAFETY_DRIVER_COST_PER_HOUR * (miles_driven - (miles_driven * autonomous_success_rate)) / 20 / miles_driven)
@@ -94,16 +95,17 @@ def monte_carlo_simulation(num_simulations=1000):
         results.append(average_annual_profit)
     
     mean_profit = np.mean(results)
-    std_profit = np.std(results)  # Fixed from np.mean
+    std_profit = np.std(results)
     mean_manual_miles = np.mean(manual_miles_results)
     mean_autonomous_miles = np.mean(autonomous_miles_results)
     mean_revenue_per_mile = np.mean(revenue_results)
     mean_cost_per_mile = np.mean(cost_per_mile_results)
+    mean_occupancy_rate = np.mean(occupancy_rate_results)  # Average occupancy rate
     
-    return mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile
+    return mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile, mean_occupancy_rate
 
 # Run the simulation
-mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile = monte_carlo_simulation()
+mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile, mean_occupancy_rate = monte_carlo_simulation()
 
 # Subtract FSD Subscription Fees
 Actual_Profit = mean_profit - FSD_SUBSCRIPTION
@@ -119,6 +121,7 @@ mean_annual_revenue = mean_revenue_per_mile * MILES_PER_YEAR
 print(f"Average Annual Profit per Robotaxi: ${Actual_Profit:,.2f}")
 print(f"Average Annual Cost per Robotaxi: ${mean_annual_cost:,.2f}")
 print(f"Average Annual Revenue per Robotaxi: ${mean_annual_revenue:,.2f}")
+print(f"Average Occupancy Rate: {mean_occupancy_rate:.2%}")  # Added as percentage
 print(f"Standard Deviation of Profit: ${std_profit:,.2f}")
 print(f"Total Robotaxis in Fleet: {FLEET_SIZE:.0f}")
 print(f"Total Annual Fleet Profit: ${Total_Fleet_Profit:,.2f}")
