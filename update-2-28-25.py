@@ -21,7 +21,7 @@ def monte_carlo_simulation(num_simulations=1000):
     results = []
     manual_miles_results = []
     autonomous_miles_results = []
-    revenue_results = []  # Collect revenue adjusted for occupancy
+    revenue_results = []
     cost_per_mile_results = []
     
     for _ in range(num_simulations):
@@ -49,19 +49,16 @@ def monte_carlo_simulation(num_simulations=1000):
             revenue = revenue_per_mile(willingness_to_pay, PLATFORM_FEE) * occupancy_rate
             revenue_results.append(revenue)
             
-            autonomous_miles = miles_driven * autonomous_success_rate
-            manual_miles = miles_driven - autonomous_miles
-            manual_hours = manual_miles / 20
-            safety_driver_cost = SAFETY_DRIVER_COST_PER_HOUR * manual_hours / miles_driven
-            adjusted_cost = cost_per_mile + safety_driver_cost
+            # Profit using adjusted revenue
+            profit_per_mile = revenue - cost_per_mile
+            adjusted_cost = cost_per_mile + (SAFETY_DRIVER_COST_PER_HOUR * (miles_driven - (miles_driven * autonomous_success_rate)) / 20 / miles_driven)
             total_cost_sim += adjusted_cost * miles_driven
             
-            profit_per_mile = revenue_per_mile(willingness_to_pay, PLATFORM_FEE) - adjusted_cost
-            annual_profit = profit_per_mile * miles_driven * occupancy_rate
+            annual_profit = profit_per_mile * miles_driven
             total_profit += annual_profit
             
-            manual_miles_results.append(manual_miles)
-            autonomous_miles_results.append(autonomous_miles)
+            manual_miles_results.append(miles_driven - (miles_driven * autonomous_success_rate))
+            autonomous_miles_results.append(miles_driven * autonomous_success_rate)
         
         if VEHICLE_LIFESPAN % 1 != 0:
             fractional_year = VEHICLE_LIFESPAN % 1
@@ -80,19 +77,15 @@ def monte_carlo_simulation(num_simulations=1000):
             revenue = revenue_per_mile(willingness_to_pay, PLATFORM_FEE) * occupancy_rate
             revenue_results.append(revenue)
             
-            autonomous_miles = miles_driven * autonomous_success_rate
-            manual_miles = miles_driven - autonomous_miles
-            manual_hours = manual_miles / 20
-            safety_driver_cost = SAFETY_DRIVER_COST_PER_HOUR * manual_hours / miles_driven
-            adjusted_cost = cost_per_mile + safety_driver_cost
+            profit_per_mile = revenue - cost_per_mile
+            adjusted_cost = cost_per_mile + (SAFETY_DRIVER_COST_PER_HOUR * (miles_driven - (miles_driven * autonomous_success_rate)) / 20 / miles_driven)
             total_cost_sim += adjusted_cost * miles_driven
             
-            profit_per_mile = revenue_per_mile(willingness_to_pay, PLATFORM_FEE) - adjusted_cost
-            annual_profit = profit_per_mile * miles_driven * occupancy_rate
+            annual_profit = profit_per_mile * miles_driven
             total_profit += annual_profit
             
-            manual_miles_results.append(manual_miles)
-            autonomous_miles_results.append(autonomous_miles)
+            manual_miles_results.append(miles_driven - (miles_driven * autonomous_success_rate))
+            autonomous_miles_results.append(miles_driven * autonomous_success_rate)
         
         average_cost_per_mile_sim = total_cost_sim / (MILES_PER_YEAR * VEHICLE_LIFESPAN)
         cost_per_mile_results.append(average_cost_per_mile_sim)
@@ -101,7 +94,7 @@ def monte_carlo_simulation(num_simulations=1000):
         results.append(average_annual_profit)
     
     mean_profit = np.mean(results)
-    std_profit = np.mean(results)
+    std_profit = np.std(results)  # Fixed from np.mean
     mean_manual_miles = np.mean(manual_miles_results)
     mean_autonomous_miles = np.mean(autonomous_miles_results)
     mean_revenue_per_mile = np.mean(revenue_results)
