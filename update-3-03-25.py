@@ -1,5 +1,5 @@
 import numpy as np
-
+ 
 # Constants
 YEARS = 3.5
 MILES_PER_YEAR = 90000
