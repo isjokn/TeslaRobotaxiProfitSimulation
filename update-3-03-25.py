@@ -2,7 +2,7 @@ import numpy as np
 
 # Constants
 YEARS = 3.5
-MILES_PER_YEAR = 90000  # 90,000 miles/year
+MILES_PER_YEAR = 90000
 VEHICLE_COST = 30000
 VEHICLE_LIFESPAN = 3.5
 ENERGY_COST_PER_MILE = 0.04
@@ -11,7 +11,7 @@ PLATFORM_FEE = 0.50
 SAFETY_DRIVER_COST_PER_HOUR = 0
 FLEET_SIZE = 1
 FSD_SUBSCRIPTION = 2388
-CLEANING_COST_PER_YEAR = 5475  # $15/day * 365
+CLEANING_COST_PER_YEAR = 5475
 
 # Function to calculate revenue per mile
 def revenue_per_mile(willingness_to_pay, platform_fee):
@@ -20,8 +20,8 @@ def revenue_per_mile(willingness_to_pay, platform_fee):
 # Monte Carlo simulation function
 def monte_carlo_simulation(num_simulations=1000):
     results = []
-    manual_miles_results = []
-    autonomous_miles_results = []
+    manual_miles_total = []
+    autonomous_miles_total = []
     revenue_results = []
     cost_per_mile_results = []
     occupancy_rate_results = []
@@ -33,6 +33,8 @@ def monte_carlo_simulation(num_simulations=1000):
         total_miles = MILES_PER_YEAR * VEHICLE_LIFESPAN
         total_cost_sim = 0
         total_revenue_sim = 0
+        total_manual_miles = 0
+        total_autonomous_miles = 0
         residual_value = np.random.uniform(0.05, 0.20) * VEHICLE_COST
         
         for year in range(int(VEHICLE_LIFESPAN)):
@@ -61,8 +63,10 @@ def monte_carlo_simulation(num_simulations=1000):
             annual_profit = profit_per_mile * miles_driven
             total_profit += annual_profit
             
-            manual_miles_results.append(miles_driven - (miles_driven * autonomous_success_rate))
-            autonomous_miles_results.append(miles_driven * autonomous_success_rate)
+            manual_miles = miles_driven - (miles_driven * autonomous_success_rate)
+            autonomous_miles = miles_driven * autonomous_success_rate
+            total_manual_miles += manual_miles
+            total_autonomous_miles += autonomous_miles
         
         if VEHICLE_LIFESPAN % 1 != 0:
             fractional_year = VEHICLE_LIFESPAN % 1
@@ -91,23 +95,29 @@ def monte_carlo_simulation(num_simulations=1000):
             annual_profit = profit_per_mile * miles_driven
             total_profit += annual_profit
             
-            manual_miles_results.append(miles_driven - (miles_driven * autonomous_success_rate))
-            autonomous_miles_results.append(miles_driven * autonomous_success_rate)
+            manual_miles = miles_driven - (miles_driven * autonomous_success_rate)
+            autonomous_miles = miles_driven * autonomous_success_rate
+            total_manual_miles += manual_miles
+            total_autonomous_miles += autonomous_miles
         
         average_cost_per_mile_sim = total_cost_sim / (MILES_PER_YEAR * VEHICLE_LIFESPAN)
         cost_per_mile_results.append(average_cost_per_mile_sim)
         
         average_annual_profit = total_profit / VEHICLE_LIFESPAN
         results.append(average_annual_profit)
+        
+        # Store total miles per simulation, averaged later
+        manual_miles_total.append(total_manual_miles / VEHICLE_LIFESPAN)
+        autonomous_miles_total.append(total_autonomous_miles / VEHICLE_LIFESPAN)
     
     mean_profit = np.mean(results)
     std_profit = np.std(results)
-    mean_manual_miles = np.mean(manual_miles_results)
-    mean_autonomous_miles = np.mean(autonomous_miles_results)
+    mean_manual_miles = np.mean(manual_miles_total)  # Now averages per year correctly
+    mean_autonomous_miles = np.mean(autonomous_miles_total)
     mean_revenue_per_mile = np.mean(revenue_results)
     mean_cost_per_mile = np.mean(cost_per_mile_results)
     mean_occupancy_rate = np.mean(occupancy_rate_results)
-    mean_cleaning_cost_per_day = CLEANING_COST_PER_YEAR / 365  # Daily cost
+    mean_cleaning_cost_per_day = CLEANING_COST_PER_YEAR / 365
     
     return mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile, mean_occupancy_rate, mean_cleaning_cost_per_day
 
