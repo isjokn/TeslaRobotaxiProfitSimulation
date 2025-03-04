@@ -2,7 +2,7 @@ import numpy as np
 
 # Constants
 YEARS = 3.5
-MILES_PER_YEAR = 60000
+MILES_PER_YEAR = 90000  # 90,000 miles/year
 VEHICLE_COST = 30000
 VEHICLE_LIFESPAN = 3.5
 ENERGY_COST_PER_MILE = 0.04
@@ -11,6 +11,7 @@ PLATFORM_FEE = 0.50
 SAFETY_DRIVER_COST_PER_HOUR = 0
 FLEET_SIZE = 1
 FSD_SUBSCRIPTION = 2388
+CLEANING_COST_PER_YEAR = 5475  # $15/day * 365
 
 # Function to calculate revenue per mile
 def revenue_per_mile(willingness_to_pay, platform_fee):
@@ -45,7 +46,7 @@ def monte_carlo_simulation(num_simulations=1000):
             depreciation = book_value - book_value_end
             book_value = book_value_end
             depreciation_per_mile = depreciation / miles_driven
-            cost_per_mile = depreciation_per_mile + ENERGY_COST_PER_MILE + MAINTENANCE_COST_PER_MILE
+            cost_per_mile = depreciation_per_mile + ENERGY_COST_PER_MILE + MAINTENANCE_COST_PER_MILE + (CLEANING_COST_PER_YEAR / MILES_PER_YEAR)
             
             revenue_per_mile_full = revenue_per_mile(willingness_to_pay, PLATFORM_FEE)
             revenue = revenue_per_mile_full * occupancy_rate
@@ -75,7 +76,7 @@ def monte_carlo_simulation(num_simulations=1000):
             book_value_end = VEHICLE_COST * (residual_value / VEHICLE_COST) ** (cumulative_miles / total_miles)
             depreciation = book_value - book_value_end
             depreciation_per_mile = depreciation / miles_driven
-            cost_per_mile = depreciation_per_mile + ENERGY_COST_PER_MILE + MAINTENANCE_COST_PER_MILE
+            cost_per_mile = depreciation_per_mile + ENERGY_COST_PER_MILE + MAINTENANCE_COST_PER_MILE + (CLEANING_COST_PER_YEAR / MILES_PER_YEAR)
             
             revenue_per_mile_full = revenue_per_mile(willingness_to_pay, PLATFORM_FEE)
             revenue = revenue_per_mile_full * occupancy_rate
@@ -106,11 +107,12 @@ def monte_carlo_simulation(num_simulations=1000):
     mean_revenue_per_mile = np.mean(revenue_results)
     mean_cost_per_mile = np.mean(cost_per_mile_results)
     mean_occupancy_rate = np.mean(occupancy_rate_results)
+    mean_cleaning_cost_per_day = CLEANING_COST_PER_YEAR / 365  # Daily cost
     
-    return mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile, mean_occupancy_rate
+    return mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile, mean_occupancy_rate, mean_cleaning_cost_per_day
 
 # Run the simulation
-mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile, mean_occupancy_rate = monte_carlo_simulation()
+mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile, mean_occupancy_rate, mean_cleaning_cost_per_day = monte_carlo_simulation()
 
 # Subtract FSD Subscription Fees
 Actual_Profit = mean_profit - FSD_SUBSCRIPTION
@@ -128,6 +130,7 @@ print(f"Average Revenue Per Mile: ${mean_revenue_per_mile:,.2f}")
 print(f"Average Occupancy Rate: {mean_occupancy_rate:.2%}")
 print(f"Average Annual Cost per Robotaxi: ${mean_annual_cost:,.2f}")
 print(f"Average Cost Per Mile: ${mean_cost_per_mile:,.2f}")
+print(f"Average Cleaning Cost per Day: ${mean_cleaning_cost_per_day:,.2f}")
 print(f"FSD Subscription Cost per Year: ${FSD_SUBSCRIPTION:,.2f}")
 print(f"Average Annual Profit per Robotaxi: ${Actual_Profit:,.2f}")
 print(f"Standard Deviation of Profit: ${std_profit:,.2f}")
