@@ -148,3 +148,39 @@ print(f"Total Robotaxis in Fleet: {FLEET_SIZE:.0f}")
 print(f"Total Annual Fleet Profit: ${Total_Fleet_Profit:,.2f}")
 print(f"Average Manual (Non FSD) Miles Travelled Per Year: {mean_manual_miles:,.2f}")
 print(f"Average FSD Miles Travelled Per Year: {mean_autonomous_miles:,.2f}")
+
+
+
+
+# Enhanced output view
+print("===== Robotaxi Profitability Simulation Results =====")
+print()
+print("--- At a Glance ---")
+print(f"With {MILES_PER_YEAR:,} miles/year and {mean_occupancy_rate:.2%} occupancy, your robotaxi nets ${Actual_Profit:,.2f} annually after costs.")
+print()
+print("--- Revenue ---")
+print(f"Average Annual Revenue per Robotaxi:      ${mean_annual_revenue:,.2f}")
+print(f"Average Revenue Per Mile:                    ${mean_revenue_per_mile:,.2f}")
+print(f"Average Occupancy Rate:                     {mean_occupancy_rate:.2%}")
+print()
+print("--- Costs ---")
+print(f"Average Annual Cost per Robotaxi:         ${mean_annual_cost:,.2f}")
+print(f"Average Cost Per Mile:                       ${mean_cost_per_mile:,.2f}")
+print(f"Average Cleaning Cost per Day:               ${mean_cleaning_cost_per_day:,.2f}")
+print(f"FSD Subscription Cost per Year:            ${FSD_SUBSCRIPTION:,.2f}")
+print()
+print("--- Profit ---")
+print(f"Average Annual Profit per Robotaxi:       ${Actual_Profit:,.2f}")
+print(f"Standard Deviation of Profit:              ${std_profit:,.2f}")
+print()
+print("--- Fleet Overview ---")
+print(f"Total Robotaxis in Fleet:                        {FLEET_SIZE:.0f}")
+print(f"Total Annual Fleet Profit:                ${Total_Fleet_Profit:,.2f}")
+print(f"Average Manual (Non FSD) Miles/Year:      {mean_manual_miles:,.2f}")
+print(f"Average FSD Miles Travelled/Year:         {mean_autonomous_miles:,.2f}")
+print()
+print("==================================================")
+
+
+
+
