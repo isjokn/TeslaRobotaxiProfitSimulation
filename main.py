@@ -1,86 +1,147 @@
 import numpy as np
-
+ 
 # Constants
-YEARS = 5  # Model over 5 years
-MILES_PER_YEAR = 50000  # Miles per year per vehicle default is 50k, full time Uber and Lyft drivers report $50,000 per year.
-VEHICLE_COST = 30000  # Cost of a robotaxi default is 30k, Elon Musk has said Cybercab would cost less than $30,000
-VEHICLE_LIFESPAN = 5  # Years of operation default is 5, according to Tesla, a Model 3 can exceed 200,000 miles of useful life.
-ENERGY_COST_PER_MILE = 0.04  # $0.04 per mile for electricity, current estimates online suggest 4.8 cents per mile for personal use.
-MAINTENANCE_COST_PER_MILE = 0.04  # $0.04 per mile for maintenance, current estimates online suggest 4.5 cents per mile for personal use.
-PLATFORM_FEE = 0.25  # 25% platform fee (revenue split)
-SAFETY_DRIVER_COST_PER_HOUR = 15  # Hourly cost for safety driver phase-out default is 15
-FLEET_SIZE = 1  # Number of vehicles in your robotaxi fleet default is 1
-FSD_SUBSCRIPTION = 1188 # $99 per month for 12 months
-###MARKET_PENETRATION = 0.1  # 10% market penetration to start
+YEARS = 3.5
+MILES_PER_YEAR = 90000
+VEHICLE_COST = 30000
+VEHICLE_LIFESPAN = 3.5
+ENERGY_COST_PER_MILE = 0.04
+MAINTENANCE_COST_PER_MILE = 0.04
+PLATFORM_FEE = 0.50
+SAFETY_DRIVER_COST_PER_HOUR = 0
+FLEET_SIZE = 1
+FSD_SUBSCRIPTION = 2388
+CLEANING_COST_PER_YEAR = 5475
 
-# Function to calculate cost per mile for robotaxi operations
-def cost_per_mile(vehicle_cost, miles_per_year, vehicle_lifespan, energy_cost, maintenance_cost, residual_value):
-    # Depreciation cost now considers residual value
-    depreciation_cost = (vehicle_cost - residual_value) / (miles_per_year * vehicle_lifespan)
-    total_cost_per_mile = depreciation_cost + energy_cost + maintenance_cost
-    return total_cost_per_mile
-
-# Function to estimate revenue based on willingness to pay
+# Function to calculate revenue per mile
 def revenue_per_mile(willingness_to_pay, platform_fee):
     return willingness_to_pay * (1 - platform_fee)
 
-# Simulate different scenarios using Monte Carlo default num_simulations is 1000
+# Monte Carlo simulation function
 def monte_carlo_simulation(num_simulations=1000):
     results = []
-    manual_miles_results = []
-    autonomous_miles_results = []
+    manual_miles_total = []
+    autonomous_miles_total = []
+    revenue_results = []
+    cost_per_mile_results = []
+    occupancy_rate_results = []
+    
     for _ in range(num_simulations):
-        
-     # Simulating variability in key metrics
-        willingness_to_pay = np.random.normal(1.50, 0.10)  # Assume $0.50 per mile on average with some variability default 10%
-        occupancy_rate = np.random.uniform(0.2, 0.6)  # Varying occupancy rate between 20% and 60%
-        autonomous_success_rate = np.random.uniform(0.70, 0.99)  # Varying success rate from 70% to 99%
-        
-     # Simulate residual value that will be left at the end of the 5 years based on a percentage of initial cost, varying from 5% to 20%
+        total_profit = 0
+        book_value = VEHICLE_COST
+        cumulative_miles = 0
+        total_miles = MILES_PER_YEAR * VEHICLE_LIFESPAN
+        total_cost_sim = 0
+        total_revenue_sim = 0
+        total_manual_miles = 0
+        total_autonomous_miles = 0
         residual_value = np.random.uniform(0.05, 0.20) * VEHICLE_COST
         
-     # Calculate costs and revenues
-        cost = cost_per_mile(VEHICLE_COST, MILES_PER_YEAR, VEHICLE_LIFESPAN, ENERGY_COST_PER_MILE, MAINTENANCE_COST_PER_MILE, residual_value)
-        revenue = revenue_per_mile(willingness_to_pay, PLATFORM_FEE)
+        for year in range(int(VEHICLE_LIFESPAN)):
+            willingness_to_pay = np.random.normal(2.00, 0.10)
+            occupancy_rate = np.random.uniform(0.2, 0.6)
+            autonomous_success_rate = np.random.uniform(0.70, 0.99)
+            miles_driven = MILES_PER_YEAR
+            cumulative_miles += miles_driven
+            
+            book_value_end = VEHICLE_COST * (residual_value / VEHICLE_COST) ** (cumulative_miles / total_miles)
+            depreciation = book_value - book_value_end
+            book_value = book_value_end
+            depreciation_per_mile = depreciation / miles_driven
+            cost_per_mile = depreciation_per_mile + ENERGY_COST_PER_MILE + MAINTENANCE_COST_PER_MILE + (CLEANING_COST_PER_YEAR / MILES_PER_YEAR)
+            
+            revenue_per_mile_full = revenue_per_mile(willingness_to_pay, PLATFORM_FEE)
+            revenue = revenue_per_mile_full * occupancy_rate
+            revenue_results.append(revenue)
+            total_revenue_sim += revenue * miles_driven
+            occupancy_rate_results.append(occupancy_rate)
+            
+            profit_per_mile = revenue - cost_per_mile
+            adjusted_cost = cost_per_mile
+            total_cost_sim += adjusted_cost * miles_driven
+            
+            annual_profit = profit_per_mile * miles_driven
+            total_profit += annual_profit
+            
+            manual_miles = miles_driven - (miles_driven * autonomous_success_rate)
+            autonomous_miles = miles_driven * autonomous_success_rate
+            total_manual_miles += manual_miles
+            total_autonomous_miles += autonomous_miles
         
-     # Adjust cost for autonomous vs. manual driving
-        autonomous_miles = MILES_PER_YEAR * autonomous_success_rate
-        manual_miles = MILES_PER_YEAR - autonomous_miles
+        if VEHICLE_LIFESPAN % 1 != 0:
+            fractional_year = VEHICLE_LIFESPAN % 1
+            miles_driven = MILES_PER_YEAR * fractional_year
+            cumulative_miles += miles_driven
+            
+            willingness_to_pay = np.random.normal(2.00, 0.10)
+            occupancy_rate = np.random.uniform(0.2, 0.6)
+            autonomous_success_rate = np.random.uniform(0.70, 0.99)
+            
+            book_value_end = VEHICLE_COST * (residual_value / VEHICLE_COST) ** (cumulative_miles / total_miles)
+            depreciation = book_value - book_value_end
+            depreciation_per_mile = depreciation / miles_driven
+            cost_per_mile = depreciation_per_mile + ENERGY_COST_PER_MILE + MAINTENANCE_COST_PER_MILE + (CLEANING_COST_PER_YEAR / MILES_PER_YEAR)
+            
+            revenue_per_mile_full = revenue_per_mile(willingness_to_pay, PLATFORM_FEE)
+            revenue = revenue_per_mile_full * occupancy_rate
+            revenue_results.append(revenue)
+            total_revenue_sim += revenue * miles_driven
+            occupancy_rate_results.append(occupancy_rate)
+            
+            profit_per_mile = revenue - cost_per_mile
+            adjusted_cost = cost_per_mile
+            total_cost_sim += adjusted_cost * miles_driven
+            
+            annual_profit = profit_per_mile * miles_driven
+            total_profit += annual_profit
+            
+            manual_miles = miles_driven - (miles_driven * autonomous_success_rate)
+            autonomous_miles = miles_driven * autonomous_success_rate
+            total_manual_miles += manual_miles
+            total_autonomous_miles += autonomous_miles
         
-     # Convert manual miles to hours assuming a speed of 20 mph for simplicity
-        manual_hours = manual_miles / 20  # Assuming 20 mph average speed
+        average_cost_per_mile_sim = total_cost_sim / (MILES_PER_YEAR * VEHICLE_LIFESPAN)
+        cost_per_mile_results.append(average_cost_per_mile_sim)
         
-     # Cost per mile includes safety driver cost when not autonomous
-        adjusted_cost = cost + (SAFETY_DRIVER_COST_PER_HOUR * manual_hours / MILES_PER_YEAR)
-
-    #Calculate the Profit Per Mile -NOTE the initial cost of the vehicle is not considered up front but it is considered over the life of the vehicle in the calculations and is already taken out of the profit.
-        profit_per_mile = revenue - adjusted_cost
-        annual_profit = profit_per_mile * MILES_PER_YEAR * occupancy_rate
-        results.append(annual_profit)
-
-    #Attempt to store manual_miles for each time through simulation
-        manual_miles_results.append(manual_miles)
-
-    #Attempt to store autonmous miles for each time through simulation
-        autonomous_miles_results.append(autonomous_miles)
-
-    #Calculate the mean of both profit and manual miles
-        mean_profit = np.mean(results)
-        std_profit = np.std(results)
-        mean_manual_miles = np.mean (manual_miles_results)
-        mean_autonomous_miles = np.mean (autonomous_miles_results)
+        average_annual_profit = total_profit / VEHICLE_LIFESPAN
+        results.append(average_annual_profit)
+        
+        # Store total miles per simulation, averaged later
+        manual_miles_total.append(total_manual_miles / VEHICLE_LIFESPAN)
+        autonomous_miles_total.append(total_autonomous_miles / VEHICLE_LIFESPAN)
     
-    return mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles
+    mean_profit = np.mean(results)
+    std_profit = np.std(results)
+    mean_manual_miles = np.mean(manual_miles_total)  # Now averages per year correctly
+    mean_autonomous_miles = np.mean(autonomous_miles_total)
+    mean_revenue_per_mile = np.mean(revenue_results)
+    mean_cost_per_mile = np.mean(cost_per_mile_results)
+    mean_occupancy_rate = np.mean(occupancy_rate_results)
+    mean_cleaning_cost_per_day = CLEANING_COST_PER_YEAR / 365
+    
+    return mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile, mean_occupancy_rate, mean_cleaning_cost_per_day
 
 # Run the simulation
-mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles = monte_carlo_simulation()
+mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile, mean_occupancy_rate, mean_cleaning_cost_per_day = monte_carlo_simulation()
 
 # Subtract FSD Subscription Fees
 Actual_Profit = mean_profit - FSD_SUBSCRIPTION
 
-# Calculate Total_Fleet_Profit using the mean_profit from the simulation * the FLEET_SIZE
+# Calculate Total Fleet Profit
 Total_Fleet_Profit = Actual_Profit * FLEET_SIZE
 
+# Calculate Average Annual Cost and Revenue
+mean_annual_cost = mean_cost_per_mile * MILES_PER_YEAR
+mean_annual_revenue = mean_revenue_per_mile * MILES_PER_YEAR
+
+# Print results in logical order
+print(f"Average Annual Revenue per Robotaxi: ${mean_annual_revenue:,.2f}")
+print(f"Average Revenue Per Mile: ${mean_revenue_per_mile:,.2f}")
+print(f"Average Occupancy Rate: {mean_occupancy_rate:.2%}")
+print(f"Average Annual Cost per Robotaxi: ${mean_annual_cost:,.2f}")
+print(f"Average Cost Per Mile: ${mean_cost_per_mile:,.2f}")
+print(f"Average Cleaning Cost per Day: ${mean_cleaning_cost_per_day:,.2f}")
+print(f"FSD Subscription Cost per Year: ${FSD_SUBSCRIPTION:,.2f}")
 print(f"Average Annual Profit per Robotaxi: ${Actual_Profit:,.2f}")
 print(f"Standard Deviation of Profit: ${std_profit:,.2f}")
 print(f"Total Robotaxis in Fleet: {FLEET_SIZE:.0f}")
