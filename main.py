@@ -190,7 +190,7 @@ root.title("Robotaxi Profitability Simulation")
 
 # Add logo at the top
 try:
-    logo = tk.PhotoImage(file="logo.png")  # Replace with your logo file path
+    logo = tk.PhotoImage(file="/Users/johnknapp/Documents/GitHub/TeslaRobotaxiProfitSimulation/Shrub.jpg")  # Replace with your logo file path
     logo_label = tk.Label(root, image=logo)
     logo_label.image = logo  # Keep a reference to avoid garbage collection
     logo_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5)
