@@ -159,34 +159,37 @@ def submit_form():
             cleaning_cost_per_year, platform_fee_per_ride, fsd_subscription, fleet_size
         )
         
-        # Format the results for display
-        result_string = "===== Robotaxi Profitability Simulation Results =====\n\n"
-        result_string += "--- At a Glance ---\n"
-        result_string += f"With {miles_per_year:,} miles/year and {mean_occupancy_rate:.2%} occupancy,\n"
-        result_string += f"your robotaxi nets ${actual_profit:,.2f} annually after costs.\n\n"
-        result_string += "--- Revenue ---\n"
-        result_string += f"Average Annual Revenue per Robotaxi:      ${mean_annual_revenue:,.2f}\n"
-        result_string += f"Average Revenue Per Mile:                      ${mean_revenue_per_mile:,.2f}\n"
-        result_string += f"Average Occupancy Rate:                       {mean_occupancy_rate:.2%}\n\n"
-        result_string += "--- Costs ---\n"
-        result_string += f"Average Annual Cost per Robotaxi:         ${mean_annual_cost:,.2f}\n"
-        result_string += f"Average Cost Per Mile:                         ${mean_cost_per_mile:,.2f}\n"
-        result_string += f"Average Cleaning Cost per Day:                ${mean_cleaning_cost_per_day:,.2f}\n"
-        result_string += f"Platform Fee per Ride:                    ${platform_fee_per_ride:,.2f}\n"  # Added to costs
-        result_string += f"FSD Subscription Cost per Year:            ${fsd_subscription:,.2f}\n\n"
-        result_string += "--- Profit ---\n"
-        result_string += f"Average Annual Profit per Robotaxi:       ${actual_profit:,.2f}\n"
-        result_string += f"Standard Deviation of Profit:              ${std_profit:,.2f}\n\n"
-        result_string += "--- Fleet Overview ---\n"
-        result_string += f"Total Robotaxis in Fleet:                          {fleet_size:.0f}\n"
-        result_string += f"Total Annual Fleet Profit:                ${total_fleet_profit:,.2f}\n"
-        result_string += f"Average Manual Miles/Year:                 {mean_manual_miles:,.2f}\n"
-        result_string += f"Average Autonomous Miles/Year:             {mean_autonomous_miles:,.2f}\n"
-        result_string += "====================================================="
-        
-        # Clear previous results and display new ones
+        # Format the results for display with better alignment and bold headers
+        result_text.tag_configure("bold", font=("TkDefaultFont", 10, "bold"))
         result_text.delete(1.0, tk.END)
-        result_text.insert(tk.END, result_string)
+        result_text.insert(tk.END, "===== Robotaxi Profitability Simulation Results =====\n\n", "bold")
+        
+        result_text.insert(tk.END, "--- At a Glance ---\n", "bold")
+        result_text.insert(tk.END, f"With {miles_per_year:,} miles/year and {mean_occupancy_rate:.2%} occupancy,\n")
+        result_text.insert(tk.END, f"your robotaxi nets ${actual_profit:,.2f} annually after costs.\n\n")
+        
+        result_text.insert(tk.END, "--- Revenue ---\n", "bold")
+        result_text.insert(tk.END, f"Average Annual Revenue per Robotaxi:      ${mean_annual_revenue:>10,.2f}\n")
+        result_text.insert(tk.END, f"Average Revenue Per Mile:                 ${mean_revenue_per_mile:>10,.2f}\n")
+        result_text.insert(tk.END, f"Average Occupancy Rate:                   {mean_occupancy_rate:>10.2%}\n\n")
+        
+        result_text.insert(tk.END, "--- Costs ---\n", "bold")
+        result_text.insert(tk.END, f"Average Annual Cost per Robotaxi:        ${mean_annual_cost:>10,.2f}\n")
+        result_text.insert(tk.END, f"Average Cost Per Mile:                    ${mean_cost_per_mile:>10,.2f}\n")
+        result_text.insert(tk.END, f"Average Cleaning Cost per Day:           ${mean_cleaning_cost_per_day:>10,.2f}\n")
+        result_text.insert(tk.END, f"Platform Fee per Ride:                    ${platform_fee_per_ride:>10,.2f}\n")
+        result_text.insert(tk.END, f"FSD Subscription Cost per Year:          ${fsd_subscription:>10,.2f}\n\n")
+        
+        result_text.insert(tk.END, "--- Profit ---\n", "bold")
+        result_text.insert(tk.END, f"Average Annual Profit per Robotaxi:      ${actual_profit:>10,.2f}\n")
+        result_text.insert(tk.END, f"Standard Deviation of Profit:            ${std_profit:>10,.2f}\n\n")
+        
+        result_text.insert(tk.END, "--- Fleet Overview ---\n", "bold")
+        result_text.insert(tk.END, f"Total Robotaxis in Fleet:                 {fleet_size:>10.0f}\n")
+        result_text.insert(tk.END, f"Total Annual Fleet Profit:               ${total_fleet_profit:>10,.2f}\n")
+        result_text.insert(tk.END, f"Average Manual Miles/Year:               {mean_manual_miles:>10,.2f}\n")
+        result_text.insert(tk.END, f"Average Autonomous Miles/Year:           {mean_autonomous_miles:>10,.2f}\n")
+        result_text.insert(tk.END, "==================================================", "bold")
     
     except ValueError as e:
         messagebox.showerror("Input Error", str(e))
@@ -194,69 +197,78 @@ def submit_form():
 # Create the Tkinter GUI window
 root = tk.Tk()
 root.title("Robotaxi Profitability Simulation")
+root.geometry("600x850")  # Adjusted height for better fit
+root.configure(bg="#e0e0e0")  # Slightly darker background
+# Enforce Tkinter palette to ensure button colors render correctly
+root.tk_setPalette(background="#e0e0e0", foreground="black")
 
-# Add input fields with labels and default values (rows shifted by +1, pady reduced to 4)
-tk.Label(root, text="Vehicle Cost ($):").grid(row=1, column=0, padx=5, pady=4)
-vehicle_cost_entry = tk.Entry(root)
-vehicle_cost_entry.grid(row=1, column=1, padx=5, pady=4)
+# Add input fields with labels and default values (pady=4, wider entries)
+tk.Label(root, text="Vehicle Cost ($):", bg="#e0e0e0").grid(row=0, column=0, padx=5, pady=4)
+vehicle_cost_entry = tk.Entry(root, width=15)
+vehicle_cost_entry.grid(row=0, column=1, padx=5, pady=4)
 vehicle_cost_entry.insert(0, "30000")
 
-tk.Label(root, text="Vehicle Lifespan (years):").grid(row=2, column=0, padx=5, pady=4)
-vehicle_lifespan_entry = tk.Entry(root)
-vehicle_lifespan_entry.grid(row=2, column=1, padx=5, pady=4)
+tk.Label(root, text="Vehicle Lifespan (years):", bg="#e0e0e0").grid(row=1, column=0, padx=5, pady=4)
+vehicle_lifespan_entry = tk.Entry(root, width=15)
+vehicle_lifespan_entry.grid(row=1, column=1, padx=5, pady=4)
 vehicle_lifespan_entry.insert(0, "3.5")
 
-tk.Label(root, text="Miles per Year:").grid(row=3, column=0, padx=5, pady=4)
-miles_per_year_entry = tk.Entry(root)
-miles_per_year_entry.grid(row=3, column=1, padx=5, pady=4)
+tk.Label(root, text="Miles per Year:", bg="#e0e0e0").grid(row=2, column=0, padx=5, pady=4)
+miles_per_year_entry = tk.Entry(root, width=15)
+miles_per_year_entry.grid(row=2, column=1, padx=5, pady=4)
 miles_per_year_entry.insert(0, "90000")
 
-tk.Label(root, text="Energy Cost per Mile ($):").grid(row=4, column=0, padx=5, pady=4)
-energy_cost_entry = tk.Entry(root)
-energy_cost_entry.grid(row=4, column=1, padx=5, pady=4)
+tk.Label(root, text="Energy Cost per Mile ($):", bg="#e0e0e0").grid(row=3, column=0, padx=5, pady=4)
+energy_cost_entry = tk.Entry(root, width=15)
+energy_cost_entry.grid(row=3, column=1, padx=5, pady=4)
 energy_cost_entry.insert(0, "0.04")
 
-tk.Label(root, text="Maintenance Cost per Mile ($):").grid(row=5, column=0, padx=5, pady=4)
-maintenance_cost_entry = tk.Entry(root)
-maintenance_cost_entry.grid(row=5, column=1, padx=5, pady=4)
+tk.Label(root, text="Maintenance Cost per Mile ($):", bg="#e0e0e0").grid(row=4, column=0, padx=5, pady=4)
+maintenance_cost_entry = tk.Entry(root, width=15)
+maintenance_cost_entry.grid(row=4, column=1, padx=5, pady=4)
 maintenance_cost_entry.insert(0, "0.04")
 
-tk.Label(root, text="Cleaning Cost per Year ($):").grid(row=6, column=0, padx=5, pady=4)
-cleaning_cost_entry = tk.Entry(root)
-cleaning_cost_entry.grid(row=6, column=1, padx=5, pady=4)
+tk.Label(root, text="Cleaning Cost per Year ($):", bg="#e0e0e0").grid(row=5, column=0, padx=5, pady=4)
+cleaning_cost_entry = tk.Entry(root, width=15)
+cleaning_cost_entry.grid(row=5, column=1, padx=5, pady=4)
 cleaning_cost_entry.insert(0, "5475")
 
-tk.Label(root, text="Platform Fee per Ride ($):").grid(row=7, column=0, padx=5, pady=4)  # Changed to per ride
-platform_fee_entry = tk.Entry(root)
-platform_fee_entry.grid(row=7, column=1, padx=5, pady=4)
-platform_fee_entry.insert(0, "0.50")  # Default set to $0.50
+tk.Label(root, text="Platform Fee per Ride ($):", bg="#e0e0e0").grid(row=6, column=0, padx=5, pady=4)
+platform_fee_entry = tk.Entry(root, width=15)
+platform_fee_entry.grid(row=6, column=1, padx=5, pady=4)
+platform_fee_entry.insert(0, "0.50")
 
-tk.Label(root, text="FSD Subscription per Year ($):").grid(row=8, column=0, padx=5, pady=4)
-fsd_subscription_entry = tk.Entry(root)
-fsd_subscription_entry.grid(row=8, column=1, padx=5, pady=4)
+tk.Label(root, text="FSD Subscription per Year ($):", bg="#e0e0e0").grid(row=7, column=0, padx=5, pady=4)
+fsd_subscription_entry = tk.Entry(root, width=15)
+fsd_subscription_entry.grid(row=7, column=1, padx=5, pady=4)
 fsd_subscription_entry.insert(0, "2388")
 
-tk.Label(root, text="Fleet Size:").grid(row=9, column=0, padx=5, pady=4)
-fleet_size_entry = tk.Entry(root)
-fleet_size_entry.grid(row=9, column=1, padx=5, pady=4)
+tk.Label(root, text="Fleet Size:", bg="#e0e0e0").grid(row=8, column=0, padx=5, pady=4)
+fleet_size_entry = tk.Entry(root, width=15)
+fleet_size_entry.grid(row=8, column=1, padx=5, pady=4)
 fleet_size_entry.insert(0, "1")
 
-tk.Label(root, text="Number of Simulations:").grid(row=10, column=0, padx=5, pady=4)
-num_simulations_entry = tk.Entry(root)
-num_simulations_entry.grid(row=10, column=1, padx=5, pady=4)
+tk.Label(root, text="Number of Simulations:", bg="#e0e0e0").grid(row=9, column=0, padx=5, pady=4)
+num_simulations_entry = tk.Entry(root, width=15)
+num_simulations_entry.grid(row=9, column=1, padx=5, pady=4)
 num_simulations_entry.insert(0, "1000")
 
-# Add a submit button to run the simulation
-submit_button = tk.Button(root, text="Run Simulation", command=submit_form)
-submit_button.grid(row=11, column=0, columnspan=2, pady=4)  # Reduced pady to 4
+# Add a submit button to run the simulation (using tk.Button with explicit styling and border)
+submit_button = tk.Button(root, text="Run Simulation", command=submit_form,
+                          bg="#2196F3", fg="white", activebackground="#1e88e5", activeforeground="white",
+                          font=("TkDefaultFont", 10), borderwidth=2, relief="raised")
+submit_button.grid(row=10, column=0, columnspan=2, padx=5, pady=4)
 
-# Add a text area to display results with reduced height
-result_text = tk.Text(root, height=28, width=80)  # Reduced from 20 to 10
-result_text.grid(row=12, column=0, columnspan=2, padx=5, pady=0)  # Reduced pady to 4
+# Add a text area to display results with adjusted height
+result_text = tk.Text(root, height=28, width=80, bg="white", borderwidth=1, relief="solid")
+result_text.grid(row=11, column=0, columnspan=2, padx=5, pady=4)
+scrollbar = tk.Scrollbar(root, command=result_text.yview)
+result_text.config(yscrollcommand=scrollbar.set)
+scrollbar.grid(row=11, column=2, sticky="ns")
 
 # Add contact link at the bottom
-contact_label = tk.Label(root, text="Contact: @reengineerit on X", fg="blue", cursor="hand2")
-contact_label.grid(row=13, column=0, columnspan=2, pady=0)  # Reduced pady to 4
+contact_label = tk.Label(root, text="Contact: @reengineerit on X", fg="blue", cursor="hand2", bg="#e0e0e0")
+contact_label.grid(row=12, column=0, columnspan=2, padx=5, pady=4)
 contact_label.bind("<Button-1>", lambda e: webbrowser.open("https://x.com/reengineerit"))
 contact_label.config(font=("TkDefaultFont", 10, "underline"))
 
