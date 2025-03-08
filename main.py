@@ -255,7 +255,7 @@ num_simulations_entry.insert(0, "1000")
 
 # Add a submit button to run the simulation (using tk.Button with explicit styling and border)
 submit_button = tk.Button(root, text="Run Simulation", command=submit_form,
-                          bg="#2196F3", fg="white", activebackground="#1e88e5", activeforeground="white",
+                          bg="#2196F3", fg="black", activebackground="#1e88e5", activeforeground="blue",
                           font=("TkDefaultFont", 10), borderwidth=2, relief="raised")
 submit_button.grid(row=10, column=0, columnspan=2, padx=5, pady=4)
 
