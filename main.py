@@ -197,80 +197,77 @@ def submit_form():
 # Create the Tkinter GUI window
 root = tk.Tk()
 root.title("Robotaxi Profitability Simulation")
-root.geometry("600x700")  # Reduced height for compactness
-root.configure(bg="#d0d0d0")  # Slightly darker gray for contrast
-root.tk_setPalette(background="#d0d0d0", foreground="black")  # Enforce Tkinter palette
-
-# Add title label
-tk.Label(root, text="Robotaxi Profitability Simulation", bg="#d0d0d0", font=("TkDefaultFont", 14, "bold")).grid(row=0, column=0, columnspan=2, padx=5, pady=4)
+root.geometry("600x850")  # Adjusted height for better fit
+root.configure(bg="#e0e0e0")  # Slightly darker background
+root.tk_setPalette(background="#e0e0e0", foreground="black")  # Enforce Tkinter palette
 
 # Add input fields with labels and default values (pady=4, wider entries)
-tk.Label(root, text="Vehicle Cost ($):", bg="#e0e0e0").grid(row=1, column=0, padx=5, pady=4)
-vehicle_cost_entry = tk.Entry(root, width=20)
-vehicle_cost_entry.grid(row=1, column=1, padx=5, pady=4)
+tk.Label(root, text="Vehicle Cost ($):", bg="#e0e0e0").grid(row=0, column=0, padx=5, pady=4)
+vehicle_cost_entry = tk.Entry(root, width=15)
+vehicle_cost_entry.grid(row=0, column=1, padx=5, pady=4)
 vehicle_cost_entry.insert(0, "30000")
 
-tk.Label(root, text="Vehicle Lifespan (years):", bg="#e0e0e0").grid(row=2, column=0, padx=5, pady=4)
-vehicle_lifespan_entry = tk.Entry(root, width=20)
-vehicle_lifespan_entry.grid(row=2, column=1, padx=5, pady=4)
+tk.Label(root, text="Vehicle Lifespan (years):", bg="#e0e0e0").grid(row=1, column=0, padx=5, pady=4)
+vehicle_lifespan_entry = tk.Entry(root, width=15)
+vehicle_lifespan_entry.grid(row=1, column=1, padx=5, pady=4)
 vehicle_lifespan_entry.insert(0, "3.5")
 
-tk.Label(root, text="Miles per Year:", bg="#e0e0e0").grid(row=3, column=0, padx=5, pady=4)
-miles_per_year_entry = tk.Entry(root, width=20)
-miles_per_year_entry.grid(row=3, column=1, padx=5, pady=4)
+tk.Label(root, text="Miles per Year:", bg="#e0e0e0").grid(row=2, column=0, padx=5, pady=4)
+miles_per_year_entry = tk.Entry(root, width=15)
+miles_per_year_entry.grid(row=2, column=1, padx=5, pady=4)
 miles_per_year_entry.insert(0, "90000")
 
-tk.Label(root, text="Energy Cost per Mile ($):", bg="#e0e0e0").grid(row=4, column=0, padx=5, pady=4)
-energy_cost_entry = tk.Entry(root, width=20)
-energy_cost_entry.grid(row=4, column=1, padx=5, pady=4)
+tk.Label(root, text="Energy Cost per Mile ($):", bg="#e0e0e0").grid(row=3, column=0, padx=5, pady=4)
+energy_cost_entry = tk.Entry(root, width=15)
+energy_cost_entry.grid(row=3, column=1, padx=5, pady=4)
 energy_cost_entry.insert(0, "0.04")
 
-tk.Label(root, text="Maintenance Cost per Mile ($):", bg="#e0e0e0").grid(row=5, column=0, padx=5, pady=4)
-maintenance_cost_entry = tk.Entry(root, width=20)
-maintenance_cost_entry.grid(row=5, column=1, padx=5, pady=4)
+tk.Label(root, text="Maintenance Cost per Mile ($):", bg="#e0e0e0").grid(row=4, column=0, padx=5, pady=4)
+maintenance_cost_entry = tk.Entry(root, width=15)
+maintenance_cost_entry.grid(row=4, column=1, padx=5, pady=4)
 maintenance_cost_entry.insert(0, "0.04")
 
-tk.Label(root, text="Cleaning Cost per Year ($):", bg="#e0e0e0").grid(row=6, column=0, padx=5, pady=4)
-cleaning_cost_entry = tk.Entry(root, width=20)
-cleaning_cost_entry.grid(row=6, column=1, padx=5, pady=4)
+tk.Label(root, text="Cleaning Cost per Year ($):", bg="#e0e0e0").grid(row=5, column=0, padx=5, pady=4)
+cleaning_cost_entry = tk.Entry(root, width=15)
+cleaning_cost_entry.grid(row=5, column=1, padx=5, pady=4)
 cleaning_cost_entry.insert(0, "5475")
 
-tk.Label(root, text="Platform Fee per Ride ($):", bg="#e0e0e0").grid(row=7, column=0, padx=5, pady=4)
-platform_fee_entry = tk.Entry(root, width=20)
-platform_fee_entry.grid(row=7, column=1, padx=5, pady=4)
+tk.Label(root, text="Platform Fee per Ride ($):", bg="#e0e0e0").grid(row=6, column=0, padx=5, pady=4)
+platform_fee_entry = tk.Entry(root, width=15)
+platform_fee_entry.grid(row=6, column=1, padx=5, pady=4)
 platform_fee_entry.insert(0, "0.50")
 
-tk.Label(root, text="FSD Subscription per Year ($):", bg="#e0e0e0").grid(row=8, column=0, padx=5, pady=4)
-fsd_subscription_entry = tk.Entry(root, width=20)
-fsd_subscription_entry.grid(row=8, column=1, padx=5, pady=4)
+tk.Label(root, text="FSD Subscription per Year ($):", bg="#e0e0e0").grid(row=7, column=0, padx=5, pady=4)
+fsd_subscription_entry = tk.Entry(root, width=15)
+fsd_subscription_entry.grid(row=7, column=1, padx=5, pady=4)
 fsd_subscription_entry.insert(0, "2388")
 
-tk.Label(root, text="Fleet Size:", bg="#e0e0e0").grid(row=9, column=0, padx=5, pady=4)
-fleet_size_entry = tk.Entry(root, width=20)
-fleet_size_entry.grid(row=9, column=1, padx=5, pady=4)
+tk.Label(root, text="Fleet Size:", bg="#e0e0e0").grid(row=8, column=0, padx=5, pady=4)
+fleet_size_entry = tk.Entry(root, width=15)
+fleet_size_entry.grid(row=8, column=1, padx=5, pady=4)
 fleet_size_entry.insert(0, "1")
 
-tk.Label(root, text="Number of Simulations:", bg="#e0e0e0").grid(row=10, column=0, padx=5, pady=4)
-num_simulations_entry = tk.Entry(root, width=20)
-num_simulations_entry.grid(row=10, column=1, padx=5, pady=4)
+tk.Label(root, text="Number of Simulations:", bg="#e0e0e0").grid(row=9, column=0, padx=5, pady=4)
+num_simulations_entry = tk.Entry(root, width=15)
+num_simulations_entry.grid(row=9, column=1, padx=5, pady=4)
 num_simulations_entry.insert(0, "1000")
 
 # Add a submit button to run the simulation (using tk.Button with your updated styling)
 submit_button = tk.Button(root, text="Run Simulation", command=submit_form,
                           bg="#2196F3", fg="black", activebackground="#1e88e5", activeforeground="blue",
                           font=("TkDefaultFont", 10), borderwidth=2, relief="raised")
-submit_button.grid(row=11, column=0, columnspan=2, padx=5, pady=4)
+submit_button.grid(row=10, column=0, columnspan=2, padx=5, pady=4)
 
 # Add a text area to display results with adjusted height
-result_text = tk.Text(root, height=15, width=80, bg="white", borderwidth=1, relief="solid")
-result_text.grid(row=12, column=0, columnspan=2, padx=5, pady=4)
+result_text = tk.Text(root, height=28, width=80, bg="white", borderwidth=1, relief="solid")
+result_text.grid(row=11, column=0, columnspan=2, padx=5, pady=4)
 scrollbar = tk.Scrollbar(root, command=result_text.yview)
 result_text.config(yscrollcommand=scrollbar.set)
-scrollbar.grid(row=12, column=2, sticky="ns")
+scrollbar.grid(row=11, column=2, sticky="ns")
 
 # Add contact link at the bottom
-contact_label = tk.Label(root, text="Contact: @reengineerit on X", fg="blue", cursor="hand2", bg="#d0d0d0")
-contact_label.grid(row=13, column=0, columnspan=2, padx=5, pady=4)
+contact_label = tk.Label(root, text="Contact: @reengineerit on X", fg="blue", cursor="hand2", bg="#e0e0e0")
+contact_label.grid(row=12, column=0, columnspan=2, padx=5, pady=4)
 contact_label.bind("<Button-1>", lambda e: webbrowser.open("https://x.com/reengineerit"))
 contact_label.config(font=("TkDefaultFont", 10, "underline"))
 
