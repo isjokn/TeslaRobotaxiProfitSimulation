@@ -4,13 +4,14 @@ import numpy as np
 import webbrowser
 from PIL import Image, ImageTk  # Added for JPG support
 
-# Function to calculate revenue per mile (example helper function)
-def revenue_per_mile(willingness_to_pay, platform_fee):
-    return willingness_to_pay * (1 - platform_fee)
+# Function to calculate revenue per mile (modified to use fixed fee)
+def revenue_per_mile(willingness_to_pay, platform_fee_per_ride, miles_per_ride=1.0):
+    """Calculate revenue per mile, subtracting a fixed platform fee per ride."""
+    return willingness_to_pay - (platform_fee_per_ride / miles_per_ride)
 
-# Monte Carlo simulation function (unchanged)
+# Monte Carlo simulation function (modified for fixed platform fee)
 def monte_carlo_simulation(num_simulations, vehicle_cost, vehicle_lifespan, miles_per_year, energy_cost_per_mile,
-                           maintenance_cost_per_mile, cleaning_cost_per_year, platform_fee, fsd_subscription, fleet_size):
+                           maintenance_cost_per_mile, cleaning_cost_per_year, platform_fee_per_ride, fsd_subscription, fleet_size):
     results = []
     manual_miles_total = []
     autonomous_miles_total = []
@@ -42,7 +43,8 @@ def monte_carlo_simulation(num_simulations, vehicle_cost, vehicle_lifespan, mile
             depreciation_per_mile = depreciation / miles_driven
             cost_per_mile = depreciation_per_mile + energy_cost_per_mile + maintenance_cost_per_mile + (cleaning_cost_per_year / miles_per_year)
             
-            revenue_per_mile_full = revenue_per_mile(willingness_to_pay, platform_fee)
+            # Calculate revenue per mile with fixed platform fee
+            revenue_per_mile_full = revenue_per_mile(willingness_to_pay, platform_fee_per_ride)
             revenue = revenue_per_mile_full * occupancy_rate
             revenue_results.append(revenue)
             total_revenue_sim += revenue * miles_driven
@@ -74,7 +76,8 @@ def monte_carlo_simulation(num_simulations, vehicle_cost, vehicle_lifespan, mile
             depreciation_per_mile = depreciation / miles_driven
             cost_per_mile = depreciation_per_mile + energy_cost_per_mile + maintenance_cost_per_mile + (cleaning_cost_per_year / miles_per_year)
             
-            revenue_per_mile_full = revenue_per_mile(willingness_to_pay, platform_fee)
+            # Calculate revenue per mile with fixed platform fee
+            revenue_per_mile_full = revenue_per_mile(willingness_to_pay, platform_fee_per_ride)
             revenue = revenue_per_mile_full * occupancy_rate
             revenue_results.append(revenue)
             total_revenue_sim += revenue * miles_driven
@@ -122,7 +125,7 @@ def monte_carlo_simulation(num_simulations, vehicle_cost, vehicle_lifespan, mile
     return (mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile,
             mean_occupancy_rate, mean_cleaning_cost_per_day, actual_profit, total_fleet_profit, mean_annual_cost, mean_annual_revenue)
 
-# Function to handle GUI form submission (unchanged)
+# Function to handle GUI form submission (modified for platform fee)
 def submit_form():
     try:
         # Retrieve and convert inputs from GUI
@@ -132,7 +135,7 @@ def submit_form():
         energy_cost_per_mile = float(energy_cost_entry.get())
         maintenance_cost_per_mile = float(maintenance_cost_entry.get())
         cleaning_cost_per_year = float(cleaning_cost_entry.get())
-        platform_fee = float(platform_fee_entry.get())
+        platform_fee_per_ride = float(platform_fee_entry.get())  # Changed to per ride
         fsd_subscription = float(fsd_subscription_entry.get())
         fleet_size = int(fleet_size_entry.get())
         num_simulations = int(num_simulations_entry.get())
@@ -144,6 +147,8 @@ def submit_form():
             raise ValueError("Vehicle lifespan must be positive.")
         if miles_per_year <= 0:
             raise ValueError("Miles per year must be positive.")
+        if platform_fee_per_ride < 0:
+            raise ValueError("Platform fee per ride cannot be negative.")
         if num_simulations <= 0:
             raise ValueError("Number of simulations must be positive.")
         
@@ -151,7 +156,7 @@ def submit_form():
         (mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile,
          mean_occupancy_rate, mean_cleaning_cost_per_day, actual_profit, total_fleet_profit, mean_annual_cost, mean_annual_revenue) = monte_carlo_simulation(
             num_simulations, vehicle_cost, vehicle_lifespan, miles_per_year, energy_cost_per_mile, maintenance_cost_per_mile,
-            cleaning_cost_per_year, platform_fee, fsd_subscription, fleet_size
+            cleaning_cost_per_year, platform_fee_per_ride, fsd_subscription, fleet_size
         )
         
         # Format the results for display
@@ -167,6 +172,7 @@ def submit_form():
         result_string += f"Average Annual Cost per Robotaxi:         ${mean_annual_cost:,.2f}\n"
         result_string += f"Average Cost Per Mile:                         ${mean_cost_per_mile:,.2f}\n"
         result_string += f"Average Cleaning Cost per Day:                ${mean_cleaning_cost_per_day:,.2f}\n"
+        result_string += f"Platform Fee per Ride:                    ${platform_fee_per_ride:,.2f}\n"  # Added to costs
         result_string += f"FSD Subscription Cost per Year:            ${fsd_subscription:,.2f}\n\n"
         result_string += "--- Profit ---\n"
         result_string += f"Average Annual Profit per Robotaxi:       ${actual_profit:,.2f}\n"
@@ -176,7 +182,7 @@ def submit_form():
         result_string += f"Total Annual Fleet Profit:                ${total_fleet_profit:,.2f}\n"
         result_string += f"Average Manual Miles/Year:                 {mean_manual_miles:,.2f}\n"
         result_string += f"Average Autonomous Miles/Year:             {mean_autonomous_miles:,.2f}\n"
-        result_string += "=================================================="
+        result_string += "====================================================="
         
         # Clear previous results and display new ones
         result_text.delete(1.0, tk.END)
@@ -189,18 +195,7 @@ def submit_form():
 root = tk.Tk()
 root.title("Robotaxi Profitability Simulation")
 
-# Add logo at the top with resizing
-#try:
-  #  image = Image.open("/Users/johnknapp/Documents/GitHub/TeslaRobotaxiProfitSimulation/Shrub.jpg")
-  #  image = image.resize((50, 50), Image.Resampling.LANCZOS)  # Resize to 150x150 pixels
-   # logo = ImageTk.PhotoImage(image)
-   # logo_label = tk.Label(root, image=logo)
-   # logo_label.image = logo  # Keep a reference to avoid garbage collection
-   # logo_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5)
-#except Exception as e:
-   # print(f"Error loading logo: {e}")
-
-# Add input fields with labels and default values (rows shifted by +1)
+# Add input fields with labels and default values (rows shifted by +1, pady reduced to 4)
 tk.Label(root, text="Vehicle Cost ($):").grid(row=1, column=0, padx=5, pady=4)
 vehicle_cost_entry = tk.Entry(root)
 vehicle_cost_entry.grid(row=1, column=1, padx=5, pady=4)
@@ -231,10 +226,10 @@ cleaning_cost_entry = tk.Entry(root)
 cleaning_cost_entry.grid(row=6, column=1, padx=5, pady=4)
 cleaning_cost_entry.insert(0, "5475")
 
-tk.Label(root, text="Platform Fee (decimal):").grid(row=7, column=0, padx=5, pady=4)
+tk.Label(root, text="Platform Fee per Ride ($):").grid(row=7, column=0, padx=5, pady=4)  # Changed to per ride
 platform_fee_entry = tk.Entry(root)
 platform_fee_entry.grid(row=7, column=1, padx=5, pady=4)
-platform_fee_entry.insert(0, "0.50")
+platform_fee_entry.insert(0, "0.50")  # Default set to $0.50
 
 tk.Label(root, text="FSD Subscription per Year ($):").grid(row=8, column=0, padx=5, pady=4)
 fsd_subscription_entry = tk.Entry(root)
@@ -243,25 +238,25 @@ fsd_subscription_entry.insert(0, "2388")
 
 tk.Label(root, text="Fleet Size:").grid(row=9, column=0, padx=5, pady=4)
 fleet_size_entry = tk.Entry(root)
-fleet_size_entry.grid(row=9, column=1, padx=5, pady=5)
+fleet_size_entry.grid(row=9, column=1, padx=5, pady=4)
 fleet_size_entry.insert(0, "1")
 
 tk.Label(root, text="Number of Simulations:").grid(row=10, column=0, padx=5, pady=4)
 num_simulations_entry = tk.Entry(root)
-num_simulations_entry.grid(row=10, column=1, padx=5, pady=5)
+num_simulations_entry.grid(row=10, column=1, padx=5, pady=4)
 num_simulations_entry.insert(0, "1000")
 
 # Add a submit button to run the simulation
 submit_button = tk.Button(root, text="Run Simulation", command=submit_form)
-submit_button.grid(row=11, column=0, columnspan=2, pady=8)
+submit_button.grid(row=11, column=0, columnspan=2, pady=4)  # Reduced pady to 4
 
 # Add a text area to display results with reduced height
-result_text = tk.Text(root, height=27, width=80)  # Reduced from 20 to 10
-result_text.grid(row=12, column=0, columnspan=2, padx=5, pady=4)
+result_text = tk.Text(root, height=28, width=80)  # Reduced from 20 to 10
+result_text.grid(row=12, column=0, columnspan=2, padx=5, pady=0)  # Reduced pady to 4
 
 # Add contact link at the bottom
 contact_label = tk.Label(root, text="Contact: @reengineerit on X", fg="blue", cursor="hand2")
-contact_label.grid(row=13, column=0, columnspan=2, pady=4)
+contact_label.grid(row=13, column=0, columnspan=2, pady=0)  # Reduced pady to 4
 contact_label.bind("<Button-1>", lambda e: webbrowser.open("https://x.com/reengineerit"))
 contact_label.config(font=("TkDefaultFont", 10, "underline"))
 
