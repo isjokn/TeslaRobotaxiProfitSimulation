@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
 import numpy as np
-import webbrowser  # Added for contact link functionality
+import webbrowser
+from PIL import Image, ImageTk  # Added for JPG support
 
 # Function to calculate revenue per mile (example helper function)
 def revenue_per_mile(willingness_to_pay, platform_fee):
@@ -174,7 +175,7 @@ def submit_form():
         result_string += f"Total Robotaxis in Fleet:                          {fleet_size:.0f}\n"
         result_string += f"Total Annual Fleet Profit:                ${total_fleet_profit:,.2f}\n"
         result_string += f"Average Manual Miles/Year:                 {mean_manual_miles:,.2f}\n"
-        result_string += f"Average Autonomous Miles/Year:          {mean_autonomous_miles:,.2f}\n"
+        result_string += f"Average Autonomous Miles/Year:             {mean_autonomous_miles:,.2f}\n"
         result_string += "=================================================="
         
         # Clear previous results and display new ones
@@ -188,78 +189,80 @@ def submit_form():
 root = tk.Tk()
 root.title("Robotaxi Profitability Simulation")
 
-# Add logo at the top
-try:
-    logo = tk.PhotoImage(file="/Users/johnknapp/Documents/GitHub/TeslaRobotaxiProfitSimulation/Shrub.jpg")  # Replace with your logo file path
-    logo_label = tk.Label(root, image=logo)
-    logo_label.image = logo  # Keep a reference to avoid garbage collection
-    logo_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5)
-except tk.TclError:
-    print("Logo image not found. Please check the file path.")
+# Add logo at the top with resizing
+#try:
+  #  image = Image.open("/Users/johnknapp/Documents/GitHub/TeslaRobotaxiProfitSimulation/Shrub.jpg")
+  #  image = image.resize((50, 50), Image.Resampling.LANCZOS)  # Resize to 150x150 pixels
+   # logo = ImageTk.PhotoImage(image)
+   # logo_label = tk.Label(root, image=logo)
+   # logo_label.image = logo  # Keep a reference to avoid garbage collection
+   # logo_label.grid(row=0, column=0, columnspan=2, padx=5, pady=5)
+#except Exception as e:
+   # print(f"Error loading logo: {e}")
 
 # Add input fields with labels and default values (rows shifted by +1)
-tk.Label(root, text="Vehicle Cost ($):").grid(row=1, column=0, padx=5, pady=5)
+tk.Label(root, text="Vehicle Cost ($):").grid(row=1, column=0, padx=5, pady=4)
 vehicle_cost_entry = tk.Entry(root)
-vehicle_cost_entry.grid(row=1, column=1, padx=5, pady=5)
+vehicle_cost_entry.grid(row=1, column=1, padx=5, pady=4)
 vehicle_cost_entry.insert(0, "30000")
 
-tk.Label(root, text="Vehicle Lifespan (years):").grid(row=2, column=0, padx=5, pady=5)
+tk.Label(root, text="Vehicle Lifespan (years):").grid(row=2, column=0, padx=5, pady=4)
 vehicle_lifespan_entry = tk.Entry(root)
-vehicle_lifespan_entry.grid(row=2, column=1, padx=5, pady=5)
+vehicle_lifespan_entry.grid(row=2, column=1, padx=5, pady=4)
 vehicle_lifespan_entry.insert(0, "3.5")
 
-tk.Label(root, text="Miles per Year:").grid(row=3, column=0, padx=5, pady=5)
+tk.Label(root, text="Miles per Year:").grid(row=3, column=0, padx=5, pady=4)
 miles_per_year_entry = tk.Entry(root)
-miles_per_year_entry.grid(row=3, column=1, padx=5, pady=5)
+miles_per_year_entry.grid(row=3, column=1, padx=5, pady=4)
 miles_per_year_entry.insert(0, "90000")
 
-tk.Label(root, text="Energy Cost per Mile ($):").grid(row=4, column=0, padx=5, pady=5)
+tk.Label(root, text="Energy Cost per Mile ($):").grid(row=4, column=0, padx=5, pady=4)
 energy_cost_entry = tk.Entry(root)
-energy_cost_entry.grid(row=4, column=1, padx=5, pady=5)
+energy_cost_entry.grid(row=4, column=1, padx=5, pady=4)
 energy_cost_entry.insert(0, "0.04")
 
-tk.Label(root, text="Maintenance Cost per Mile ($):").grid(row=5, column=0, padx=5, pady=5)
+tk.Label(root, text="Maintenance Cost per Mile ($):").grid(row=5, column=0, padx=5, pady=4)
 maintenance_cost_entry = tk.Entry(root)
-maintenance_cost_entry.grid(row=5, column=1, padx=5, pady=5)
+maintenance_cost_entry.grid(row=5, column=1, padx=5, pady=4)
 maintenance_cost_entry.insert(0, "0.04")
 
-tk.Label(root, text="Cleaning Cost per Year ($):").grid(row=6, column=0, padx=5, pady=5)
+tk.Label(root, text="Cleaning Cost per Year ($):").grid(row=6, column=0, padx=5, pady=4)
 cleaning_cost_entry = tk.Entry(root)
-cleaning_cost_entry.grid(row=6, column=1, padx=5, pady=5)
+cleaning_cost_entry.grid(row=6, column=1, padx=5, pady=4)
 cleaning_cost_entry.insert(0, "5475")
 
-tk.Label(root, text="Platform Fee (decimal):").grid(row=7, column=0, padx=5, pady=5)
+tk.Label(root, text="Platform Fee (decimal):").grid(row=7, column=0, padx=5, pady=4)
 platform_fee_entry = tk.Entry(root)
-platform_fee_entry.grid(row=7, column=1, padx=5, pady=5)
+platform_fee_entry.grid(row=7, column=1, padx=5, pady=4)
 platform_fee_entry.insert(0, "0.50")
 
-tk.Label(root, text="FSD Subscription per Year ($):").grid(row=8, column=0, padx=5, pady=5)
+tk.Label(root, text="FSD Subscription per Year ($):").grid(row=8, column=0, padx=5, pady=4)
 fsd_subscription_entry = tk.Entry(root)
-fsd_subscription_entry.grid(row=8, column=1, padx=5, pady=5)
+fsd_subscription_entry.grid(row=8, column=1, padx=5, pady=4)
 fsd_subscription_entry.insert(0, "2388")
 
-tk.Label(root, text="Fleet Size:").grid(row=9, column=0, padx=5, pady=5)
+tk.Label(root, text="Fleet Size:").grid(row=9, column=0, padx=5, pady=4)
 fleet_size_entry = tk.Entry(root)
 fleet_size_entry.grid(row=9, column=1, padx=5, pady=5)
 fleet_size_entry.insert(0, "1")
 
-tk.Label(root, text="Number of Simulations:").grid(row=10, column=0, padx=5, pady=5)
+tk.Label(root, text="Number of Simulations:").grid(row=10, column=0, padx=5, pady=4)
 num_simulations_entry = tk.Entry(root)
 num_simulations_entry.grid(row=10, column=1, padx=5, pady=5)
 num_simulations_entry.insert(0, "1000")
 
 # Add a submit button to run the simulation
 submit_button = tk.Button(root, text="Run Simulation", command=submit_form)
-submit_button.grid(row=11, column=0, columnspan=2, pady=10)
+submit_button.grid(row=11, column=0, columnspan=2, pady=8)
 
-# Add a text area to display results
-result_text = tk.Text(root, height=20, width=80)
-result_text.grid(row=12, column=0, columnspan=2, padx=5, pady=5)
+# Add a text area to display results with reduced height
+result_text = tk.Text(root, height=27, width=80)  # Reduced from 20 to 10
+result_text.grid(row=12, column=0, columnspan=2, padx=5, pady=4)
 
 # Add contact link at the bottom
-contact_label = tk.Label(root, text="Contact: @reenigneerit on X", fg="blue", cursor="hand2")
-contact_label.grid(row=13, column=0, columnspan=2, pady=5)
-contact_label.bind("<Button-1>", lambda e: webbrowser.open("https://x.com/reenigneerit"))
+contact_label = tk.Label(root, text="Contact: @reengineerit on X", fg="blue", cursor="hand2")
+contact_label.grid(row=13, column=0, columnspan=2, pady=4)
+contact_label.bind("<Button-1>", lambda e: webbrowser.open("https://x.com/reengineerit"))
 contact_label.config(font=("TkDefaultFont", 10, "underline"))
 
 # Start the Tkinter event loop
