@@ -162,7 +162,7 @@ def submit_form():
         # Format the results for display with aligned dollar amounts and bold headers
         result_text.tag_configure("bold", font=("TkDefaultFont", 10, "bold"))
         result_text.delete(1.0, tk.END)
-        result_text.insert(tk.END, "===== Robotaxi Profitability Simulation Results =====\n\n", "bold")
+        result_text.insert(tk.END, "===== Robotaxi Profitability Simulation Results ====================\n\n", "bold")
         
         result_text.insert(tk.END, "--- At a Glance ---\n", "bold")
         result_text.insert(tk.END, f"With {miles_per_year:,} miles/year and {mean_occupancy_rate:.2%} occupancy,\n")
@@ -171,25 +171,25 @@ def submit_form():
         result_text.insert(tk.END, "--- Revenue ---\n", "bold")
         result_text.insert(tk.END, f"Average Annual Revenue per Robotaxi:      ${mean_annual_revenue:>12,.2f}\n")
         result_text.insert(tk.END, f"Average Revenue Per Mile:                 ${mean_revenue_per_mile:>12,.2f}\n")
-        result_text.insert(tk.END, f"Average Occupancy Rate:                   {mean_occupancy_rate:>12.2%}\n\n")
+        result_text.insert(tk.END, f"Average Occupancy Rate:                    {mean_occupancy_rate:>12.2%}\n\n")
         
         result_text.insert(tk.END, "--- Costs ---\n", "bold")
-        result_text.insert(tk.END, f"Average Annual Cost per Robotaxi:        ${mean_annual_cost:>12,.2f}\n")
+        result_text.insert(tk.END, f"Average Annual Cost per Robotaxi:         ${mean_annual_cost:>12,.2f}\n")
         result_text.insert(tk.END, f"Average Cost Per Mile:                    ${mean_cost_per_mile:>12,.2f}\n")
-        result_text.insert(tk.END, f"Average Cleaning Cost per Day:           ${mean_cleaning_cost_per_day:>12,.2f}\n")
+        result_text.insert(tk.END, f"Average Cleaning Cost per Day:            ${mean_cleaning_cost_per_day:>12,.2f}\n")
         result_text.insert(tk.END, f"Platform Fee per Ride:                    ${platform_fee_per_ride:>12,.2f}\n")
-        result_text.insert(tk.END, f"FSD Subscription Cost per Year:          ${fsd_subscription:>12,.2f}\n\n")
+        result_text.insert(tk.END, f"FSD Subscription Cost per Year:           ${fsd_subscription:>12,.2f}\n\n")
         
         result_text.insert(tk.END, "--- Profit ---\n", "bold")
-        result_text.insert(tk.END, f"Average Annual Profit per Robotaxi:      ${actual_profit:>12,.2f}\n")
-        result_text.insert(tk.END, f"Standard Deviation of Profit:            ${std_profit:>12,.2f}\n\n")
+        result_text.insert(tk.END, f"Average Annual Profit per Robotaxi:       ${actual_profit:>12,.2f}\n")
+        result_text.insert(tk.END, f"Standard Deviation of Profit:             ${std_profit:>12,.2f}\n\n")
         
         result_text.insert(tk.END, "--- Fleet Overview ---\n", "bold")
-        result_text.insert(tk.END, f"Total Robotaxis in Fleet:                 {fleet_size:>12.0f}\n")
-        result_text.insert(tk.END, f"Total Annual Fleet Profit:               ${total_fleet_profit:>12,.2f}\n")
-        result_text.insert(tk.END, f"Average Manual Miles/Year:               {mean_manual_miles:>12,.2f}\n")
-        result_text.insert(tk.END, f"Average Autonomous Miles/Year:           {mean_autonomous_miles:>12,.2f}\n")
-        result_text.insert(tk.END, "==================================================", "bold")
+        result_text.insert(tk.END, f"Total Robotaxis in Fleet:                  {fleet_size:>12.0f}\n")
+        result_text.insert(tk.END, f"Total Annual Fleet Profit:                ${total_fleet_profit:>12,.2f}\n")
+        result_text.insert(tk.END, f"Average Manual Miles/Year:                 {mean_manual_miles:>12,.2f}\n")
+        result_text.insert(tk.END, f"Average Autonomous Miles/Year:             {mean_autonomous_miles:>12,.2f}\n")
+        result_text.insert(tk.END, "========================================================", "bold")
     
     except ValueError as e:
         messagebox.showerror("Input Error", str(e))
