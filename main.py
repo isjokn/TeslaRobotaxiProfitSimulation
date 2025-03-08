@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import numpy as np
 import webbrowser
-from PIL import Image, ImageTk  # Added for JPG support
+from PIL import Image, ImageTk  # Kept for potential future use
 
 # Function to calculate revenue per mile (modified to use fixed fee)
 def revenue_per_mile(willingness_to_pay, platform_fee_per_ride, miles_per_ride=1.0):
@@ -159,36 +159,36 @@ def submit_form():
             cleaning_cost_per_year, platform_fee_per_ride, fsd_subscription, fleet_size
         )
         
-        # Format the results for display with better alignment and bold headers
+        # Format the results for display with aligned dollar amounts and bold headers
         result_text.tag_configure("bold", font=("TkDefaultFont", 10, "bold"))
         result_text.delete(1.0, tk.END)
         result_text.insert(tk.END, "===== Robotaxi Profitability Simulation Results =====\n\n", "bold")
         
         result_text.insert(tk.END, "--- At a Glance ---\n", "bold")
         result_text.insert(tk.END, f"With {miles_per_year:,} miles/year and {mean_occupancy_rate:.2%} occupancy,\n")
-        result_text.insert(tk.END, f"your robotaxi nets ${actual_profit:,.2f} annually after costs.\n\n")
+        result_text.insert(tk.END, f"your robotaxi nets ${actual_profit:>12,.2f} annually after costs.\n\n")
         
         result_text.insert(tk.END, "--- Revenue ---\n", "bold")
-        result_text.insert(tk.END, f"Average Annual Revenue per Robotaxi:      ${mean_annual_revenue:>10,.2f}\n")
-        result_text.insert(tk.END, f"Average Revenue Per Mile:                 ${mean_revenue_per_mile:>10,.2f}\n")
-        result_text.insert(tk.END, f"Average Occupancy Rate:                   {mean_occupancy_rate:>10.2%}\n\n")
+        result_text.insert(tk.END, f"Average Annual Revenue per Robotaxi:      ${mean_annual_revenue:>12,.2f}\n")
+        result_text.insert(tk.END, f"Average Revenue Per Mile:                 ${mean_revenue_per_mile:>12,.2f}\n")
+        result_text.insert(tk.END, f"Average Occupancy Rate:                   {mean_occupancy_rate:>12.2%}\n\n")
         
         result_text.insert(tk.END, "--- Costs ---\n", "bold")
-        result_text.insert(tk.END, f"Average Annual Cost per Robotaxi:        ${mean_annual_cost:>10,.2f}\n")
-        result_text.insert(tk.END, f"Average Cost Per Mile:                    ${mean_cost_per_mile:>10,.2f}\n")
-        result_text.insert(tk.END, f"Average Cleaning Cost per Day:           ${mean_cleaning_cost_per_day:>10,.2f}\n")
-        result_text.insert(tk.END, f"Platform Fee per Ride:                    ${platform_fee_per_ride:>10,.2f}\n")
-        result_text.insert(tk.END, f"FSD Subscription Cost per Year:          ${fsd_subscription:>10,.2f}\n\n")
+        result_text.insert(tk.END, f"Average Annual Cost per Robotaxi:        ${mean_annual_cost:>12,.2f}\n")
+        result_text.insert(tk.END, f"Average Cost Per Mile:                    ${mean_cost_per_mile:>12,.2f}\n")
+        result_text.insert(tk.END, f"Average Cleaning Cost per Day:           ${mean_cleaning_cost_per_day:>12,.2f}\n")
+        result_text.insert(tk.END, f"Platform Fee per Ride:                    ${platform_fee_per_ride:>12,.2f}\n")
+        result_text.insert(tk.END, f"FSD Subscription Cost per Year:          ${fsd_subscription:>12,.2f}\n\n")
         
         result_text.insert(tk.END, "--- Profit ---\n", "bold")
-        result_text.insert(tk.END, f"Average Annual Profit per Robotaxi:      ${actual_profit:>10,.2f}\n")
-        result_text.insert(tk.END, f"Standard Deviation of Profit:            ${std_profit:>10,.2f}\n\n")
+        result_text.insert(tk.END, f"Average Annual Profit per Robotaxi:      ${actual_profit:>12,.2f}\n")
+        result_text.insert(tk.END, f"Standard Deviation of Profit:            ${std_profit:>12,.2f}\n\n")
         
         result_text.insert(tk.END, "--- Fleet Overview ---\n", "bold")
-        result_text.insert(tk.END, f"Total Robotaxis in Fleet:                 {fleet_size:>10.0f}\n")
-        result_text.insert(tk.END, f"Total Annual Fleet Profit:               ${total_fleet_profit:>10,.2f}\n")
-        result_text.insert(tk.END, f"Average Manual Miles/Year:               {mean_manual_miles:>10,.2f}\n")
-        result_text.insert(tk.END, f"Average Autonomous Miles/Year:           {mean_autonomous_miles:>10,.2f}\n")
+        result_text.insert(tk.END, f"Total Robotaxis in Fleet:                 {fleet_size:>12.0f}\n")
+        result_text.insert(tk.END, f"Total Annual Fleet Profit:               ${total_fleet_profit:>12,.2f}\n")
+        result_text.insert(tk.END, f"Average Manual Miles/Year:               {mean_manual_miles:>12,.2f}\n")
+        result_text.insert(tk.END, f"Average Autonomous Miles/Year:           {mean_autonomous_miles:>12,.2f}\n")
         result_text.insert(tk.END, "==================================================", "bold")
     
     except ValueError as e:
@@ -199,8 +199,7 @@ root = tk.Tk()
 root.title("Robotaxi Profitability Simulation")
 root.geometry("600x850")  # Adjusted height for better fit
 root.configure(bg="#e0e0e0")  # Slightly darker background
-# Enforce Tkinter palette to ensure button colors render correctly
-root.tk_setPalette(background="#e0e0e0", foreground="black")
+root.tk_setPalette(background="#e0e0e0", foreground="black")  # Enforce Tkinter palette
 
 # Add input fields with labels and default values (pady=4, wider entries)
 tk.Label(root, text="Vehicle Cost ($):", bg="#e0e0e0").grid(row=0, column=0, padx=5, pady=4)
@@ -253,7 +252,7 @@ num_simulations_entry = tk.Entry(root, width=15)
 num_simulations_entry.grid(row=9, column=1, padx=5, pady=4)
 num_simulations_entry.insert(0, "1000")
 
-# Add a submit button to run the simulation (using tk.Button with explicit styling and border)
+# Add a submit button to run the simulation (using tk.Button with your updated styling)
 submit_button = tk.Button(root, text="Run Simulation", command=submit_form,
                           bg="#2196F3", fg="black", activebackground="#1e88e5", activeforeground="blue",
                           font=("TkDefaultFont", 10), borderwidth=2, relief="raised")
