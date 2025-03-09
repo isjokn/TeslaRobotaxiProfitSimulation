@@ -204,7 +204,7 @@ def submit_form():
         result_text.insert(tk.END, "--- Fleet Overview ---\n", "bold")
         result_text.insert(tk.END, f"Total Robotaxis in Fleet:                  {fleet_size:>12.0f}\n")
         result_text.insert(tk.END, f"Total Annual Fleet Profit:                ${total_fleet_profit:>12,.2f}\n")
-        result_text.insert(tk.END, f"Average Manual Miles/Year:                 {mean_manual_miles:>12,.2f}\n")
+        result_text.insert(tk.END, f"Average Passengerless Miles/Year:          {mean_manual_miles:>12,.2f}\n")
         result_text.insert(tk.END, f"Average Autonomous Miles/Year:             {mean_autonomous_miles:>12,.2f}\n")
         result_text.insert(tk.END, "========================================================", "bold")
     
