@@ -3,6 +3,7 @@
 A Python script utilizing Monte Carlo simulation to estimate the annual profit of Tesla's robotaxi operations.
 
 ## Table of Contents
+- [Dependencies](#Dependencies)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
@@ -17,8 +18,29 @@ A Python script utilizing Monte Carlo simulation to estimate the annual profit o
 - [Acknowledgments](#acknowledgments)
 - [Contact](#contact)
 
-## Installation
-You'll need Python 3 installed on your system along with the `numpy` library:
+## Dependencies
+
+This project relies on the following Python libraries. Ensure they are installed before running the code:
+
+- tkinter: Built-in Python library for creating the graphical user interface.
+
+- numpy: For numerical computations and Monte Carlo simulation calculations. Install with `pip install numpy`.
+
+- webbrowser: Built-in Python library for opening web links (e.g., the contact link).
+
+- Pillow: For potential image handling (e.g., GUI enhancements). Install with `pip install Pillow` (though currently unused).
+
+### Installation
+
+To install the required libraries, run the following command:
+
+```bash
+pip install numpy Pillow
 
 ```sh
 pip install numpy
+
+## Contact
+
+ Reengineerit on X
+
