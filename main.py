@@ -4,14 +4,15 @@ import numpy as np
 import webbrowser
 from PIL import Image, ImageTk  # Kept for potential future use
 
-# Function to calculate revenue per mile (modified to use fixed fee)
+# Function to calculate revenue per mile (unchanged)
 def revenue_per_mile(willingness_to_pay, platform_fee_per_ride, miles_per_ride=1.0):
     """Calculate revenue per mile, subtracting a fixed platform fee per ride."""
     return willingness_to_pay - (platform_fee_per_ride / miles_per_ride)
 
-# Monte Carlo simulation function (modified for fixed platform fee)
+# Monte Carlo simulation function (updated to include insurance cost)
 def monte_carlo_simulation(num_simulations, vehicle_cost, vehicle_lifespan, miles_per_year, energy_cost_per_mile,
-                           maintenance_cost_per_mile, cleaning_cost_per_year, platform_fee_per_ride, fsd_subscription, fleet_size):
+                           maintenance_cost_per_mile, cleaning_cost_per_year, platform_fee_per_ride, fsd_subscription,
+                           insurance_cost_per_year, fleet_size):
     results = []
     manual_miles_total = []
     autonomous_miles_total = []
@@ -41,7 +42,13 @@ def monte_carlo_simulation(num_simulations, vehicle_cost, vehicle_lifespan, mile
             depreciation = book_value - book_value_end
             book_value = book_value_end
             depreciation_per_mile = depreciation / miles_driven
-            cost_per_mile = depreciation_per_mile + energy_cost_per_mile + maintenance_cost_per_mile + (cleaning_cost_per_year / miles_per_year)
+            
+            # Calculate per-mile insurance cost
+            insurance_cost_per_mile = insurance_cost_per_year / miles_per_year
+            
+            # Total cost per mile including insurance
+            cost_per_mile = (depreciation_per_mile + energy_cost_per_mile + maintenance_cost_per_mile +
+                             (cleaning_cost_per_year / miles_per_year) + insurance_cost_per_mile)
             
             # Calculate revenue per mile with fixed platform fee
             revenue_per_mile_full = revenue_per_mile(willingness_to_pay, platform_fee_per_ride)
@@ -74,7 +81,13 @@ def monte_carlo_simulation(num_simulations, vehicle_cost, vehicle_lifespan, mile
             book_value_end = vehicle_cost * (residual_value / vehicle_cost) ** (cumulative_miles / total_miles)
             depreciation = book_value - book_value_end
             depreciation_per_mile = depreciation / miles_driven
-            cost_per_mile = depreciation_per_mile + energy_cost_per_mile + maintenance_cost_per_mile + (cleaning_cost_per_year / miles_per_year)
+            
+            # Calculate per-mile insurance cost for fractional year
+            insurance_cost_per_mile = insurance_cost_per_year / miles_per_year
+            
+            # Total cost per mile including insurance
+            cost_per_mile = (depreciation_per_mile + energy_cost_per_mile + maintenance_cost_per_mile +
+                             (cleaning_cost_per_year / miles_per_year) + insurance_cost_per_mile)
             
             # Calculate revenue per mile with fixed platform fee
             revenue_per_mile_full = revenue_per_mile(willingness_to_pay, platform_fee_per_ride)
@@ -125,7 +138,7 @@ def monte_carlo_simulation(num_simulations, vehicle_cost, vehicle_lifespan, mile
     return (mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile,
             mean_occupancy_rate, mean_cleaning_cost_per_day, actual_profit, total_fleet_profit, mean_annual_cost, mean_annual_revenue)
 
-# Function to handle GUI form submission (modified for platform fee)
+# Function to handle GUI form submission (updated to include insurance cost with restored alignment)
 def submit_form():
     try:
         # Retrieve and convert inputs from GUI
@@ -135,8 +148,9 @@ def submit_form():
         energy_cost_per_mile = float(energy_cost_entry.get())
         maintenance_cost_per_mile = float(maintenance_cost_entry.get())
         cleaning_cost_per_year = float(cleaning_cost_entry.get())
-        platform_fee_per_ride = float(platform_fee_entry.get())  # Changed to per ride
+        platform_fee_per_ride = float(platform_fee_entry.get())
         fsd_subscription = float(fsd_subscription_entry.get())
+        insurance_cost_per_year = float(insurance_cost_entry.get())  # New insurance cost input
         fleet_size = int(fleet_size_entry.get())
         num_simulations = int(num_simulations_entry.get())
         
@@ -149,6 +163,8 @@ def submit_form():
             raise ValueError("Miles per year must be positive.")
         if platform_fee_per_ride < 0:
             raise ValueError("Platform fee per ride cannot be negative.")
+        if insurance_cost_per_year < 0:
+            raise ValueError("Insurance cost per year cannot be negative.")
         if num_simulations <= 0:
             raise ValueError("Number of simulations must be positive.")
         
@@ -156,10 +172,10 @@ def submit_form():
         (mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile,
          mean_occupancy_rate, mean_cleaning_cost_per_day, actual_profit, total_fleet_profit, mean_annual_cost, mean_annual_revenue) = monte_carlo_simulation(
             num_simulations, vehicle_cost, vehicle_lifespan, miles_per_year, energy_cost_per_mile, maintenance_cost_per_mile,
-            cleaning_cost_per_year, platform_fee_per_ride, fsd_subscription, fleet_size
+            cleaning_cost_per_year, platform_fee_per_ride, fsd_subscription, insurance_cost_per_year, fleet_size
         )
         
-        # Format the results for display with aligned dollar amounts and bold headers
+        # Format the results for display with restored manual alignment
         result_text.tag_configure("bold", font=("TkDefaultFont", 10, "bold"))
         result_text.delete(1.0, tk.END)
         result_text.insert(tk.END, "===== Robotaxi Profitability Simulation Results ====================\n\n", "bold")
@@ -178,6 +194,7 @@ def submit_form():
         result_text.insert(tk.END, f"Average Cost Per Mile:                    ${mean_cost_per_mile:>12,.2f}\n")
         result_text.insert(tk.END, f"Average Cleaning Cost per Day:            ${mean_cleaning_cost_per_day:>12,.2f}\n")
         result_text.insert(tk.END, f"Platform Fee per Ride:                    ${platform_fee_per_ride:>12,.2f}\n")
+        result_text.insert(tk.END, f"Insurance Cost per Year:                  ${insurance_cost_per_year:>12,.2f}\n")  # Added with alignment
         result_text.insert(tk.END, f"FSD Subscription Cost per Year:           ${fsd_subscription:>12,.2f}\n\n")
         
         result_text.insert(tk.END, "--- Profit ---\n", "bold")
@@ -194,14 +211,14 @@ def submit_form():
     except ValueError as e:
         messagebox.showerror("Input Error", str(e))
 
-# Create the Tkinter GUI window
+# Create the Tkinter GUI window (unchanged except for new insurance field)
 root = tk.Tk()
 root.title("Robotaxi Profitability Simulation")
-root.geometry("600x850")  # Adjusted height for better fit
-root.configure(bg="#e0e0e0")  # Slightly darker background
-root.tk_setPalette(background="#e0e0e0", foreground="black")  # Enforce Tkinter palette
+root.geometry("600x850")
+root.configure(bg="#e0e0e0")
+root.tk_setPalette(background="#e0e0e0", foreground="black")
 
-# Add input fields with labels and default values (pady=4, wider entries)
+# Add input fields with labels and default values
 tk.Label(root, text="Vehicle Cost ($):", bg="#e0e0e0").grid(row=0, column=0, padx=5, pady=4)
 vehicle_cost_entry = tk.Entry(root, width=15)
 vehicle_cost_entry.grid(row=0, column=1, padx=5, pady=4)
@@ -242,32 +259,38 @@ fsd_subscription_entry = tk.Entry(root, width=15)
 fsd_subscription_entry.grid(row=7, column=1, padx=5, pady=4)
 fsd_subscription_entry.insert(0, "2388")
 
-tk.Label(root, text="Fleet Size:", bg="#e0e0e0").grid(row=8, column=0, padx=5, pady=4)
+# New Insurance Cost per Year field
+tk.Label(root, text="Insurance Cost per Year ($):", bg="#e0e0e0").grid(row=8, column=0, padx=5, pady=4)
+insurance_cost_entry = tk.Entry(root, width=15)
+insurance_cost_entry.grid(row=8, column=1, padx=5, pady=4)
+insurance_cost_entry.insert(0, "1000")
+
+tk.Label(root, text="Fleet Size:", bg="#e0e0e0").grid(row=9, column=0, padx=5, pady=4)
 fleet_size_entry = tk.Entry(root, width=15)
-fleet_size_entry.grid(row=8, column=1, padx=5, pady=4)
+fleet_size_entry.grid(row=9, column=1, padx=5, pady=4)
 fleet_size_entry.insert(0, "1")
 
-tk.Label(root, text="Number of Simulations:", bg="#e0e0e0").grid(row=9, column=0, padx=5, pady=4)
+tk.Label(root, text="Number of Simulations:", bg="#e0e0e0").grid(row=10, column=0, padx=5, pady=4)
 num_simulations_entry = tk.Entry(root, width=15)
-num_simulations_entry.grid(row=9, column=1, padx=5, pady=4)
+num_simulations_entry.grid(row=10, column=1, padx=5, pady=4)
 num_simulations_entry.insert(0, "1000")
 
-# Add a submit button to run the simulation (using tk.Button with your updated styling)
+# Add a submit button to run the simulation
 submit_button = tk.Button(root, text="Run Simulation", command=submit_form,
                           bg="#2196F3", fg="black", activebackground="#1e88e5", activeforeground="blue",
                           font=("TkDefaultFont", 10), borderwidth=2, relief="raised")
-submit_button.grid(row=10, column=0, columnspan=2, padx=5, pady=4)
+submit_button.grid(row=11, column=0, columnspan=2, padx=5, pady=4)
 
-# Add a text area to display results with adjusted height
+# Add a text area to display results
 result_text = tk.Text(root, height=28, width=80, bg="white", borderwidth=1, relief="solid")
-result_text.grid(row=11, column=0, columnspan=2, padx=5, pady=4)
+result_text.grid(row=12, column=0, columnspan=2, padx=5, pady=4)
 scrollbar = tk.Scrollbar(root, command=result_text.yview)
 result_text.config(yscrollcommand=scrollbar.set)
-scrollbar.grid(row=11, column=2, sticky="ns")
+scrollbar.grid(row=12, column=2, sticky="ns")
 
 # Add contact link at the bottom
 contact_label = tk.Label(root, text="Contact: @reengineerit on X", fg="blue", cursor="hand2", bg="#e0e0e0")
-contact_label.grid(row=12, column=0, columnspan=2, padx=5, pady=4)
+contact_label.grid(row=13, column=0, columnspan=2, padx=5, pady=4)
 contact_label.bind("<Button-1>", lambda e: webbrowser.open("https://x.com/reengineerit"))
 contact_label.config(font=("TkDefaultFont", 10, "underline"))
 
