@@ -9,7 +9,7 @@ def revenue_per_mile(willingness_to_pay, platform_fee_per_ride, miles_per_ride=1
     """Calculate revenue per mile, subtracting a fixed platform fee per ride."""
     return willingness_to_pay - (platform_fee_per_ride / miles_per_ride)
 
-# Monte Carlo simulation function (updated to include insurance cost)
+# Monte Carlo simulation function (updated for accurate revenue calculation)
 def monte_carlo_simulation(num_simulations, vehicle_cost, vehicle_lifespan, miles_per_year, energy_cost_per_mile,
                            maintenance_cost_per_mile, cleaning_cost_per_year, platform_fee_per_ride, fsd_subscription,
                            insurance_cost_per_year, fleet_size):
@@ -50,9 +50,9 @@ def monte_carlo_simulation(num_simulations, vehicle_cost, vehicle_lifespan, mile
             cost_per_mile = (depreciation_per_mile + energy_cost_per_mile + maintenance_cost_per_mile +
                              (cleaning_cost_per_year / miles_per_year) + insurance_cost_per_mile)
             
-            # Calculate revenue per mile with fixed platform fee
+            # Calculate revenue per mile, adjusted for autonomous success and occupancy
             revenue_per_mile_full = revenue_per_mile(willingness_to_pay, platform_fee_per_ride)
-            revenue = revenue_per_mile_full * occupancy_rate
+            revenue = revenue_per_mile_full * autonomous_success_rate * occupancy_rate  # Updated calculation
             revenue_results.append(revenue)
             total_revenue_sim += revenue * miles_driven
             occupancy_rate_results.append(occupancy_rate)
@@ -89,9 +89,9 @@ def monte_carlo_simulation(num_simulations, vehicle_cost, vehicle_lifespan, mile
             cost_per_mile = (depreciation_per_mile + energy_cost_per_mile + maintenance_cost_per_mile +
                              (cleaning_cost_per_year / miles_per_year) + insurance_cost_per_mile)
             
-            # Calculate revenue per mile with fixed platform fee
+            # Calculate revenue per mile, adjusted for autonomous success and occupancy
             revenue_per_mile_full = revenue_per_mile(willingness_to_pay, platform_fee_per_ride)
-            revenue = revenue_per_mile_full * occupancy_rate
+            revenue = revenue_per_mile_full * autonomous_success_rate * occupancy_rate  # Updated calculation
             revenue_results.append(revenue)
             total_revenue_sim += revenue * miles_driven
             occupancy_rate_results.append(occupancy_rate)
@@ -138,7 +138,7 @@ def monte_carlo_simulation(num_simulations, vehicle_cost, vehicle_lifespan, mile
     return (mean_profit, std_profit, mean_manual_miles, mean_autonomous_miles, mean_revenue_per_mile, mean_cost_per_mile,
             mean_occupancy_rate, mean_cleaning_cost_per_day, actual_profit, total_fleet_profit, mean_annual_cost, mean_annual_revenue)
 
-# Function to handle GUI form submission (updated to include insurance cost with restored alignment)
+# Function to handle GUI form submission (unchanged)
 def submit_form():
     try:
         # Retrieve and convert inputs from GUI
@@ -204,14 +204,14 @@ def submit_form():
         result_text.insert(tk.END, "--- Fleet Overview ---\n", "bold")
         result_text.insert(tk.END, f"Total Robotaxis in Fleet:                  {fleet_size:>12.0f}\n")
         result_text.insert(tk.END, f"Total Annual Fleet Profit:                ${total_fleet_profit:>12,.2f}\n")
-        result_text.insert(tk.END, f"Average Passengerless Miles/Year:          {mean_manual_miles:>12,.2f}\n")
+        result_text.insert(tk.END, f"Average Out of Service Miles/Year:         {mean_manual_miles:>12,.2f}\n")
         result_text.insert(tk.END, f"Average Autonomous Miles/Year:             {mean_autonomous_miles:>12,.2f}\n")
         result_text.insert(tk.END, "========================================================", "bold")
     
     except ValueError as e:
         messagebox.showerror("Input Error", str(e))
 
-# Create the Tkinter GUI window (unchanged except for new insurance field)
+# Create the Tkinter GUI window (unchanged)
 root = tk.Tk()
 root.title("Robotaxi Profitability Simulation")
 root.geometry("600x850")
